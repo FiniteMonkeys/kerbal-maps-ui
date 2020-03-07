@@ -21,7 +21,12 @@ class MainMap extends React.Component {
     const position = [this.state.lat, this.state.lon]
 
     return (
-      <LeafletMap center={position} zoom={this.state.zoom} preferCanvas={true} crs={CRS.EPSG4326}>
+      <LeafletMap
+        center={position}
+        zoom={this.state.zoom}
+        preferCanvas={true}
+        crs={CRS.EPSG4326}
+      >
         <TileLayer
           attribution="Map data: crowdsourced | Imagery: © 2011-2020 Take-Two Interactive, Inc."
           url="https://d3kmnwgldcmvsd.cloudfront.net/tiles/{body}/{style}/{z}/{x}/{y}.png"
