@@ -1,5 +1,5 @@
 body {
-  font: 14px "Century Gothic", Futura, sans-serif;
+  /* font: 14px "Century Gothic", Futura, sans-serif; */
   margin: 0;
   padding: 0;
 }
@@ -8,8 +8,22 @@ h1, h2, h3, h4, h5, h6 {
   letter-spacing: 0;
 }
 
+.credits {
+  text-align: left;
+}
+
 .credits > h2, .credits > p {
   text-align: center;
+}
+
+.credits > ul {
+  padding-inline-start: 20px;
+  padding-inline-end: 10px;
+}
+
+.credits li {
+  padding-block-start: 3px;
+  padding-block-end: 3px;
 }
 
 .card-header button {
@@ -22,33 +36,29 @@ h1, h2, h3, h4, h5, h6 {
   line-height: 14px;
 }
 
-.leaflet-sidebar {
-  margin-left: 10px;
-}
-
-.leaflet-sidebar button,
-.leaflet-sidebar input,
-.leaflet-sidebar li,
-.leaflet-sidebar p,
-.leaflet-sidebar select {
+.sidebar button,
+.sidebar input,
+.sidebar li,
+.sidebar p,
+.sidebar select {
   font-size: 14px;
   line-height: 14px;
 }
 
-.leaflet-sidebar label {
+.sidebar label {
   font-size: 14px;
   margin-left: 1em;
 }
 
-.leaflet-sidebar-pane {
+.sidebar-pane {
   padding: 10px;
 }
 
-.leaflet-sidebar-pane .container-fluid {
+.sidebar-pane .container-fluid {
   padding: 0;
 }
 
-.leaflet-sidebar-pane .row {
+.sidebar-pane .row {
   margin-top: 3em;
 }
 
