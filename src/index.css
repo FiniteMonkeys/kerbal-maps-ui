@@ -18,10 +18,14 @@ h1, h2, h3, h4, h5, h6 {
 
 .card-header h2 {
   display: inline-block;
+  font-size: 14px;
+  line-height: 14px;
 }
 
-/* .card-body h3, */
-.card-header h2,
+.leaflet-sidebar {
+  margin-left: 10px;
+}
+
 .leaflet-sidebar button,
 .leaflet-sidebar input,
 .leaflet-sidebar li,
