@@ -8,41 +8,18 @@ h1, h2, h3, h4, h5, h6 {
   letter-spacing: 0;
 }
 
-.credits {
-  text-align: left;
-}
-
-.credits > h2, .credits > p {
-  text-align: center;
-}
-
-.credits > ul {
-  padding-inline-start: 20px;
-  padding-inline-end: 10px;
-}
-
-.credits li {
-  padding-block-start: 3px;
-  padding-block-end: 3px;
-}
-
-.card-header button {
-  margin-bottom: 0;
-}
-
-.card-header h2 {
-  display: inline-block;
-  font-size: 14px;
-  line-height: 14px;
-}
-
 .sidebar button,
+.sidebar del,
 .sidebar input,
 .sidebar li,
 .sidebar p,
 .sidebar select {
   font-size: 14px;
   line-height: 14px;
+}
+
+.sidebar button {
+  text-transform: uppercase;
 }
 
 .sidebar label {
@@ -62,6 +39,21 @@ h1, h2, h3, h4, h5, h6 {
   margin-top: 3em;
 }
 
+.sidebar-tabs,
+.sidebar-tabs > ul {
+  list-style-type: none;
+}
+
+.card-header button {
+  margin-bottom: 0;
+}
+
+.card-header h2 {
+  display: inline-block;
+  font-size: 14px;
+  line-height: 14px;
+}
+
 .card-body form {
   margin-bottom: 0;
 }
@@ -69,6 +61,24 @@ h1, h2, h3, h4, h5, h6 {
 .card-body h3 {
   font-size: 18px;
   line-height: 18px;
+}
+
+.credits {
+  text-align: left;
+}
+
+.credits > h2, .credits > p {
+  text-align: center;
+}
+
+.credits > ul {
+  padding-inline-start: 20px;
+  padding-inline-end: 10px;
+}
+
+.credits li {
+  padding-block-start: 3px;
+  padding-block-end: 3px;
 }
 
 .leaflet-grab {
