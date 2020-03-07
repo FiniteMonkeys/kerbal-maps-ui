@@ -10,14 +10,19 @@ class KMMap extends React.Component {
     super(props)
 
     this.state = {
+      // map state
       lat: -0.1027,
       lon: -74.5754,
       zoom: 5,
       body: "kerbin",
       style: "sat",
 
+      // sidebar state
       collapsed: true,
-      selected: "sidebar-home"
+      selected: "sidebar-home",
+
+      // user state
+      currentUser: undefined,
     }
   }
 
@@ -83,7 +88,85 @@ class KMMap extends React.Component {
               </div>
             </div>
           </Tab>
-          <Tab id="sidebar-profile" header="Profile" icon="fas fa-user">
+          <Tab id="sidebar-profile" header={this.state.currentUser || "Profile"} icon="fas fa-user">
+            {/*
+              if currentUser do
+                render user content
+              else
+            */}
+
+            <div class="container-fluid">
+              <div class="row">
+                <div class="col">
+                  <div class="accordion" id="accordionNoUser">
+
+                    <div class="card">
+                      <div class="card-header" id="headingNoUserLogin">
+                        <h2 class="mb-0 align-middle">
+                          <button class="btn btn-link align-middle" type="button" data-toggle="collapse" data-target="#collapseNoUserLogin" aria-expanded="true" aria-controls="collapseNoUserLogin">
+                            Have a login?
+                          </button>
+                        </h2>
+                      </div>
+                      <div id="collapseNoUserLogin" class="collapse show" aria-labelledby="headingNoUserLogin" data-parent="#accordionNoUser">
+                        <div class="card-body">
+                          <form action="#" method="POST">
+                            <div class="form-group">
+                              <label for="sidebar-profile-no-user-email">Email</label>
+                              <input class="form-control" id="sidebar-profile-no-user-email" name="user[email]" placeholder="gene.kerman@ksc.kerbin" type="text" />
+                            </div>
+
+                            <div class="form-group">
+                              <label for="sidebar-profile-no-user-password">Password</label>
+                              <input class="form-control" id="sidebar-profile-no-user-password" name="user[password]" placeholder="password" type="password" />
+                            </div>
+
+                            <div class="form-group float-right">
+                              <button type="submit" class="btn btn-primary">Sign in</button>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="card">
+                      <div class="card-header" id="headingNoUserCreate">
+                        <h2 class="mb-0 align-middle">
+                          <button class="btn btn-link align-middle collapsed" type="button" data-toggle="collapse" data-target="#collapseNoUserCreate" aria-expanded="false" aria-controls="collapseNoUserCreate">
+                            Want a login?
+                          </button>
+                        </h2>
+                      </div>
+                      <div id="collapseNoUserCreate" class="collapse" aria-labelledby="headingNoUserCreate" data-parent="#accordionNoUser">
+                        <div class="card-body">
+                          <del>Create one.</del>
+                          <p>New account creation is disabled at this time.</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="card">
+                      <div class="card-header" id="headingNoUserReset">
+                        <h2 class="mb-0 align-middle">
+                          <button class="btn btn-link align-middle collapsed" type="button" data-toggle="collapse" data-target="#collapseNoUserReset" aria-expanded="false" aria-controls="collapseNoUserReset">
+                            Forgot your password?
+                          </button>
+                        </h2>
+                      </div>
+                      <div id="collapseNoUserReset" class="collapse" aria-labelledby="headingNoUserReset" data-parent="#accordionNoUser">
+                        <div class="card-body">
+                          <del>Reset it.</del>
+                          <p>Password reset is disabled at this time.</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {/*
+            end if
+          */}
           </Tab>
           <Tab id="sidebar-body-style" header="Body and Style" icon="fas fa-globe">
           </Tab>
