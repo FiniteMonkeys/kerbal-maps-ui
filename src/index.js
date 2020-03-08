@@ -177,7 +177,6 @@ class KMMap extends React.Component {
               <div className="row">
                 <div className="col">
                   <div className="accordion" id="accordionNoUser">
-
                     <div className="card">
                       <div className="card-header" id="headingNoUserLogin">
                         <h2 className="mb-0 align-middle">
@@ -266,6 +265,29 @@ class KMMap extends React.Component {
             </div>
           </Tab>
           <Tab id="sidebar-search" header="Search" icon="fas fa-search-location">
+            <div class="container-fluid">
+              <div class="row">
+                <div class="col">
+                  <form action="#" method="POST">
+                    <div class="form-group">
+                      <input className="form-control" id="sidebar-search-query" name="query" placeholder="Coordinate or waypoint" type="text" aria-describedby="sidebar-search-query-help" />
+                      <small id="sidebar-search-query-help" class="form-text text-muted">
+                        Examples:
+                        <ul>
+                          <li>-0.1027,-74.5754</li>
+                          <li>N 0.1027, W 74.5754</li>
+                          <li>0.1027 N, 74.5754 W</li>
+                        </ul>
+                      </small>
+                    </div>
+
+                    <div class="form-group float-right">
+                      <button type="submit" class="btn btn-primary">Search</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
           </Tab>
           <Tab id="sidebar-overlays" header="Overlays" icon="fas fa-layer-group">
           </Tab>
