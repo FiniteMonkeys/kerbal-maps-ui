@@ -2,8 +2,10 @@ import React from "react"
 import ReactDOM from "react-dom"
 import "./index.css"
 import { CRS } from "leaflet"
-import { Map as LeafletMap, Marker, Popup, TileLayer } from "react-leaflet"
+import { Map as LeafletMap, TileLayer } from "react-leaflet"
 import { Sidebar, Tab } from "react-leaflet-sidebarv2"
+
+import MapSource from "./components/MapSource"
 
 class KMMap extends React.Component {
   constructor(props) {
@@ -14,6 +16,7 @@ class KMMap extends React.Component {
       lat: -0.1027,
       lon: -74.5754,
       zoom: 5,
+      pack: 1,
       body: "kerbin",
       style: "sat",
 
@@ -24,6 +27,42 @@ class KMMap extends React.Component {
       // user state
       currentUser: undefined,
     }
+  }
+
+  packOptions() {
+    return [
+      {value: 1, label: "(stock)"},
+      {value: 2, label: "JNSQ"}
+    ]
+  }
+
+  bodyOptions() {
+    return [
+      {value: "moho", label: "Moho"},
+      {value: "eve", label: "Eve"},
+      {value: "gilly", label: "Gilly"},
+      {value: "kerbin", label: "Kerbin"},
+      {value: "mun", label: "Mun"},
+      {value: "minmus", label: "Minmus"},
+      {value: "duna", label: "Duna"},
+      {value: "ike", label: "Ike"},
+      {value: "dres", label: "Dres"},
+      {value: "jool", label: "Jool", disabled: true},
+      {value: "laythe", label: "Laythe"},
+      {value: "vall", label: "Vall"},
+      {value: "tylo", label: "Tylo"},
+      {value: "bop", label: "Bop"},
+      {value: "pol", label: "Pol"},
+      {value: "eeloo", label: "Eeloo"}
+    ]
+  }
+
+  styleOptions() {
+    return [
+      {value: "biome", label: "Biome"},
+      {value: "sat", label: "Satellite"},
+      {value: "slope", label: "Slope"}
+    ]
   }
 
   onOpen(id) {
@@ -37,6 +76,45 @@ class KMMap extends React.Component {
     this.setState({
       collapsed: true
     })
+  }
+
+  onPackChange(value) {
+    this.setState({
+      pack: value
+    })
+
+    // let bodyOptions = loadBodiesForPack(value)
+    // hideAllOverlays()
+    // window.overlays = {} // clear out overlays for previous body
+    // updateTileLayer(window)
+  }
+
+  onBodyChange(value) {
+    this.setState({
+      body: value
+    })
+
+    // hideAllOverlays()
+    // window.overlays = {} // clear out overlays for previous body
+    // updateTileLayer(window)
+    // if (window.selectedStyle == "biome") {
+    //   loadBiomesForBody(channel, window.legendControl, window.selectedBody)
+    // }
+  }
+
+  onStyleChange(value) {
+    this.setState({
+      style: value
+    })
+
+    // updateTileLayer(window)
+    // if (window.selectedStyle == "biome") {
+    //   window.legendControl.addTo(window.map)
+    //   loadBiomesForBody(channel, window.legendControl, window.selectedBody)
+    // }
+    // else {
+    //   window.legendControl.remove()
+    // }
   }
 
   render() {
@@ -95,66 +173,66 @@ class KMMap extends React.Component {
               else
             */}
 
-            <div class="container-fluid">
-              <div class="row">
-                <div class="col">
-                  <div class="accordion" id="accordionNoUser">
+            <div className="container-fluid">
+              <div className="row">
+                <div className="col">
+                  <div className="accordion" id="accordionNoUser">
 
-                    <div class="card">
-                      <div class="card-header" id="headingNoUserLogin">
-                        <h2 class="mb-0 align-middle">
-                          <button class="btn btn-link align-middle" type="button" data-toggle="collapse" data-target="#collapseNoUserLogin" aria-expanded="true" aria-controls="collapseNoUserLogin">
+                    <div className="card">
+                      <div className="card-header" id="headingNoUserLogin">
+                        <h2 className="mb-0 align-middle">
+                          <button className="btn btn-link align-middle" type="button" data-toggle="collapse" data-target="#collapseNoUserLogin" aria-expanded="true" aria-controls="collapseNoUserLogin">
                             Have a login?
                           </button>
                         </h2>
                       </div>
-                      <div id="collapseNoUserLogin" class="collapse show" aria-labelledby="headingNoUserLogin" data-parent="#accordionNoUser">
-                        <div class="card-body">
+                      <div id="collapseNoUserLogin" className="collapse show" aria-labelledby="headingNoUserLogin" data-parent="#accordionNoUser">
+                        <div className="card-body">
                           <form action="#" method="POST">
-                            <div class="form-group">
-                              <label for="sidebar-profile-no-user-email">Email</label>
-                              <input class="form-control" id="sidebar-profile-no-user-email" name="user[email]" placeholder="gene.kerman@ksc.kerbin" type="text" />
+                            <div className="form-group">
+                              <label htmlFor="sidebar-profile-no-user-email">Email</label>
+                              <input className="form-control" id="sidebar-profile-no-user-email" name="user[email]" placeholder="gene.kerman@ksc.kerbin" type="text" />
                             </div>
 
-                            <div class="form-group">
-                              <label for="sidebar-profile-no-user-password">Password</label>
-                              <input class="form-control" id="sidebar-profile-no-user-password" name="user[password]" placeholder="password" type="password" />
+                            <div className="form-group">
+                              <label htmlFor="sidebar-profile-no-user-password">Password</label>
+                              <input className="form-control" id="sidebar-profile-no-user-password" name="user[password]" placeholder="password" type="password" />
                             </div>
 
-                            <div class="form-group float-right">
-                              <button type="submit" class="btn btn-primary">Sign in</button>
+                            <div className="form-group float-right">
+                              <button type="submit" className="btn btn-primary">Sign in</button>
                             </div>
                           </form>
                         </div>
                       </div>
                     </div>
 
-                    <div class="card">
-                      <div class="card-header" id="headingNoUserCreate">
-                        <h2 class="mb-0 align-middle">
-                          <button class="btn btn-link align-middle collapsed" type="button" data-toggle="collapse" data-target="#collapseNoUserCreate" aria-expanded="false" aria-controls="collapseNoUserCreate">
+                    <div className="card">
+                      <div className="card-header" id="headingNoUserCreate">
+                        <h2 className="mb-0 align-middle">
+                          <button className="btn btn-link align-middle collapsed" type="button" data-toggle="collapse" data-target="#collapseNoUserCreate" aria-expanded="false" aria-controls="collapseNoUserCreate">
                             Want a login?
                           </button>
                         </h2>
                       </div>
-                      <div id="collapseNoUserCreate" class="collapse" aria-labelledby="headingNoUserCreate" data-parent="#accordionNoUser">
-                        <div class="card-body">
+                      <div id="collapseNoUserCreate" className="collapse" aria-labelledby="headingNoUserCreate" data-parent="#accordionNoUser">
+                        <div className="card-body">
                           <del>Create one.</del>
                           <p>New account creation is disabled at this time.</p>
                         </div>
                       </div>
                     </div>
 
-                    <div class="card">
-                      <div class="card-header" id="headingNoUserReset">
-                        <h2 class="mb-0 align-middle">
-                          <button class="btn btn-link align-middle collapsed" type="button" data-toggle="collapse" data-target="#collapseNoUserReset" aria-expanded="false" aria-controls="collapseNoUserReset">
+                    <div className="card">
+                      <div className="card-header" id="headingNoUserReset">
+                        <h2 className="mb-0 align-middle">
+                          <button className="btn btn-link align-middle collapsed" type="button" data-toggle="collapse" data-target="#collapseNoUserReset" aria-expanded="false" aria-controls="collapseNoUserReset">
                             Forgot your password?
                           </button>
                         </h2>
                       </div>
-                      <div id="collapseNoUserReset" class="collapse" aria-labelledby="headingNoUserReset" data-parent="#accordionNoUser">
-                        <div class="card-body">
+                      <div id="collapseNoUserReset" className="collapse" aria-labelledby="headingNoUserReset" data-parent="#accordionNoUser">
+                        <div className="card-body">
                           <del>Reset it.</del>
                           <p>Password reset is disabled at this time.</p>
                         </div>
@@ -168,7 +246,24 @@ class KMMap extends React.Component {
             end if
           */}
           </Tab>
-          <Tab id="sidebar-body-style" header="Body and Style" icon="fas fa-globe">
+          <Tab id="sidebar-body-style" header="Map Source" icon="fas fa-globe">
+            <div className="container-fluid">
+              <div className="row">
+                <div className="col">
+                  <MapSource
+                    packOptions={this.packOptions()}
+                    selectedPack={this.state.pack}
+                    onPackChange={this.onPackChange.bind(this)}
+                    bodyOptions={this.bodyOptions()}
+                    selectedBody={this.state.body}
+                    onBodyChange={this.onBodyChange.bind(this)}
+                    styleOptions={this.styleOptions()}
+                    selectedStyle={this.state.style}
+                    onStyleChange={this.onStyleChange.bind(this)}
+                  />
+                </div>
+              </div>
+            </div>
           </Tab>
           <Tab id="sidebar-search" header="Search" icon="fas fa-search-location">
           </Tab>
@@ -180,6 +275,7 @@ class KMMap extends React.Component {
           </Tab>
         </Sidebar>
         <LeafletMap
+          ref={obj => { this.leafletMap = obj }}
           className="sidebar-map"
           center={position}
           zoom={this.state.zoom}
@@ -188,8 +284,9 @@ class KMMap extends React.Component {
           crs={CRS.EPSG4326}
         >
           <TileLayer
-            attribution="Map data: crowdsourced | Imagery: © 2011-2020 Take-Two Interactive, Inc."
+            ref={obj => { this.tileLayer = obj }}
             url="https://d3kmnwgldcmvsd.cloudfront.net/tiles/{body}/{style}/{z}/{x}/{y}.png"
+            attribution="Map data: crowdsourced | Imagery: © 2011-2020 Take-Two Interactive, Inc."
             body={this.state.body}
             style={this.state.style}
             maxZoom={7}
