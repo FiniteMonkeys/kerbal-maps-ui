@@ -300,6 +300,14 @@ class KMMap extends React.Component {
             </div>
           </Tab>
           <Tab id="sidebar-upload" header="Upload" icon="fas fa-upload">
+            <div class="container-fluid">
+              <div class="row">
+                <div class="col">
+                  <form id="overlay-list" action="#">
+                  </form>
+                </div>
+              </div>
+            </div>
           </Tab>
           <Tab id="sidebar-help" header="Help" icon="fas fa-question" anchor="bottom">
           </Tab>
