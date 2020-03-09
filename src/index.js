@@ -13,10 +13,16 @@ class KMMap extends React.Component {
 
     this.state = {
       // map state
-      lat: -0.1027,
-      lon: -74.5754,
+      // lat: -0.1027,    // stock
+      // lon: -74.5754,
+
+      lat: 0.0000,        // JNSQ
+      lon: -91.8000,
+
       zoom: 5,
-      pack: 1,
+
+      // pack: 1,         // stock
+      pack: 2,            // JNSQ
       body: "kerbin",
       style: "sat",
 
@@ -38,6 +44,23 @@ class KMMap extends React.Component {
 
   bodyOptions() {
     return [
+      // {value: "moho", label: "Moho"},
+      // {value: "eve", label: "Eve"},
+      // {value: "gilly", label: "Gilly"},
+      // {value: "kerbin", label: "Kerbin"},
+      // {value: "mun", label: "Mun"},
+      // {value: "minmus", label: "Minmus"},
+      // {value: "duna", label: "Duna"},
+      // {value: "ike", label: "Ike"},
+      // {value: "dres", label: "Dres"},
+      // {value: "jool", label: "Jool", disabled: true},
+      // {value: "laythe", label: "Laythe"},
+      // {value: "vall", label: "Vall"},
+      // {value: "tylo", label: "Tylo"},
+      // {value: "bop", label: "Bop"},
+      // {value: "pol", label: "Pol"},
+      // {value: "eeloo", label: "Eeloo"}
+
       {value: "moho", label: "Moho"},
       {value: "eve", label: "Eve"},
       {value: "gilly", label: "Gilly"},
@@ -46,6 +69,8 @@ class KMMap extends React.Component {
       {value: "minmus", label: "Minmus"},
       {value: "duna", label: "Duna"},
       {value: "ike", label: "Ike"},
+      {value: "edna", label: "Edna"},
+      {value: "dak", label: "Dak"},
       {value: "dres", label: "Dres"},
       {value: "jool", label: "Jool", disabled: true},
       {value: "laythe", label: "Laythe"},
@@ -53,7 +78,20 @@ class KMMap extends React.Component {
       {value: "tylo", label: "Tylo"},
       {value: "bop", label: "Bop"},
       {value: "pol", label: "Pol"},
-      {value: "eeloo", label: "Eeloo"}
+      {value: "lindor", label: "Lindor", disabled: true},
+      {value: "krel", label: "Krel"},
+      {value: "aden", label: "Aden"},
+      {value: "huygen", label: "Huygen", disabled: true},
+      {value: "riga", label: "Riga"},
+      {value: "talos", label: "Talos"},
+      {value: "eeloo", label: "Eeloo"},
+      {value: "celes", label: "Celes"},
+      {value: "tam", label: "Tam"},
+      {value: "hamek", label: "Hamek"},
+      {value: "nara", label: "Nara"},
+      {value: "amos", label: "Amos"},
+      {value: "enon", label: "Enon"},
+      {value: "prax", label: "Prax"}
     ]
   }
 
@@ -390,8 +428,10 @@ class KMMap extends React.Component {
         >
           <TileLayer
             ref={obj => { this.tileLayer = obj }}
-            url="https://d3kmnwgldcmvsd.cloudfront.net/tiles/{body}/{style}/{z}/{x}/{y}.png"
-            attribution="Map data: crowdsourced | Imagery: © 2011-2020 Take-Two Interactive, Inc."
+            // url="https://d3kmnwgldcmvsd.cloudfront.net/tiles/{body}/{style}/{z}/{x}/{y}.png"         // stock
+            // attribution="Map data: crowdsourced | Imagery: © 2011-2020 Take-Two Interactive, Inc."
+            url="https://d3kmnwgldcmvsd.cloudfront.net/jnsq/tiles/{body}/{style}/{z}/{x}/{y}.png"
+            attribution="Map data: crowdsourced | Imagery: JNSQ, licenced by CC BY-NC-ND 3.0"
             body={this.state.body}
             style={this.state.style}
             maxZoom={7}
