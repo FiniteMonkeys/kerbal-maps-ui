@@ -1,11 +1,13 @@
 import React from "react"
 import ReactDOM from "react-dom"
-import "./index.css"
+
 import { CRS } from "leaflet"
 import { Map as LeafletMap, TileLayer } from "react-leaflet"
 import { Sidebar, Tab } from "react-leaflet-sidebarv2"
 
 import MapSource from "./components/MapSource"
+
+import "./index.css"
 
 class KMMap extends React.Component {
   constructor(props) {
@@ -13,33 +15,39 @@ class KMMap extends React.Component {
 
     this.state = {
       // map state
-      // lat: -0.1027,    // stock
-      // lon: -74.5754,
 
-      lat: 0.0000,        // JNSQ
+      // lat: -0.1027,           // stock
+      // lon: -74.5754,
+      lat: 0.0000,            // JNSQ
       lon: -91.8000,
 
       zoom: 5,
 
-      // pack: 1,         // stock
-      pack: 2,            // JNSQ
-      body: "kerbin",
-      style: "sat",
+      // mapPack: "tiles",       // stock
+      // mapBody: "kerbin",
+      // mapStyle: "sat",
+      // attribution: "Map data: crowdsourced | Imagery: © 2011-2020 Take-Two Interactive, Inc."
+      mapPack: "jnsq/tiles",  // JNSQ
+      mapBody: "kerbin",
+      mapStyle: "sat",
+      attribution: "Map data: crowdsourced | Imagery: JNSQ, licenced by CC BY-NC-ND 3.0",
 
       // sidebar state
       collapsed: true,
       selected: "sidebar-home",
 
       // user state
-      currentUser: undefined,
+      currentUser: undefined
     }
   }
 
   packOptions() {
     return [
-      {value: 1, label: "(stock)"},
-      {value: 2, label: "JNSQ"}
-    ]
+      {value: "tiles", label: "(stock)"},
+      {value: "jnsq/tiles", label: "JNSQ"}
+    ].map((option) =>
+      <option key={"pack_" + option.value} value={option.value} disabled={option.disabled ? true : false}>{option.label}</option>
+    )
   }
 
   bodyOptions() {
@@ -92,7 +100,9 @@ class KMMap extends React.Component {
       {value: "amos", label: "Amos"},
       {value: "enon", label: "Enon"},
       {value: "prax", label: "Prax"}
-    ]
+    ].map((option) =>
+      <option key={"body_" + option.value} value={option.value} disabled={option.disabled ? true : false}>{option.label}</option>
+    )
   }
 
   styleOptions() {
@@ -100,7 +110,9 @@ class KMMap extends React.Component {
       {value: "biome", label: "Biome"},
       {value: "sat", label: "Satellite"},
       {value: "slope", label: "Slope"}
-    ]
+    ].map((option) =>
+      <option key={"style_" + option.value} value={option.value} disabled={option.disabled ? true : false}>{option.label}</option>
+    )
   }
 
   onOpen(id) {
@@ -121,6 +133,8 @@ class KMMap extends React.Component {
       pack: value
     })
 
+    // alert(`pack changing to ${value}`)
+
     // let bodyOptions = loadBodiesForPack(value)
     // hideAllOverlays()
     // window.overlays = {} // clear out overlays for previous body
@@ -129,26 +143,30 @@ class KMMap extends React.Component {
 
   onBodyChange(value) {
     this.setState({
-      body: value
+      mapBody: value
     })
+
+    // alert(`body changing to ${value}`)
 
     // hideAllOverlays()
     // window.overlays = {} // clear out overlays for previous body
     // updateTileLayer(window)
-    // if (window.selectedStyle == "biome") {
-    //   loadBiomesForBody(channel, window.legendControl, window.selectedBody)
+    // if (window.mapStyle == "biome") {
+    //   loadBiomesForBody(channel, window.legendControl, window.mapBody)
     // }
   }
 
   onStyleChange(value) {
     this.setState({
-      style: value
+      mapStyle: value
     })
 
+    // alert(`style changing to ${value}`)
+
     // updateTileLayer(window)
-    // if (window.selectedStyle == "biome") {
+    // if (window.mapStyle == "biome") {
     //   window.legendControl.addTo(window.map)
-    //   loadBiomesForBody(channel, window.legendControl, window.selectedBody)
+    //   loadBiomesForBody(channel, window.legendControl, window.mapBody)
     // }
     // else {
     //   window.legendControl.remove()
@@ -284,19 +302,19 @@ class KMMap extends React.Component {
             end if
           */}
           </Tab>
-          <Tab id="sidebar-body-style" header="Map Source" icon="fas fa-globe">
+          <Tab id="sidebar-source" header="Map Source" icon="fas fa-globe">
             <div className="container-fluid">
               <div className="row">
                 <div className="col">
                   <MapSource
                     packOptions={this.packOptions()}
-                    selectedPack={this.state.pack}
+                    pack={this.state.mapPack}
                     onPackChange={this.onPackChange.bind(this)}
                     bodyOptions={this.bodyOptions()}
-                    selectedBody={this.state.body}
+                    mapBody={this.state.mapBody}
                     onBodyChange={this.onBodyChange.bind(this)}
                     styleOptions={this.styleOptions()}
-                    selectedStyle={this.state.style}
+                    mapStyle={this.state.mapStyle}
                     onStyleChange={this.onStyleChange.bind(this)}
                   />
                 </div>
@@ -428,12 +446,12 @@ class KMMap extends React.Component {
         >
           <TileLayer
             ref={obj => { this.tileLayer = obj }}
-            // url="https://d3kmnwgldcmvsd.cloudfront.net/tiles/{body}/{style}/{z}/{x}/{y}.png"         // stock
-            // attribution="Map data: crowdsourced | Imagery: © 2011-2020 Take-Two Interactive, Inc."
-            url="https://d3kmnwgldcmvsd.cloudfront.net/jnsq/tiles/{body}/{style}/{z}/{x}/{y}.png"
-            attribution="Map data: crowdsourced | Imagery: JNSQ, licenced by CC BY-NC-ND 3.0"
-            body={this.state.body}
-            style={this.state.style}
+            key={`${this.state.mapPack},${this.state.mapBody},${this.state.mapStyle}`}
+            url="https://d3kmnwgldcmvsd.cloudfront.net/{pack}/{body}/{style}/{z}/{x}/{y}.png"
+            attribution={this.state.attribution}
+            pack={this.state.mapPack}
+            body={this.state.mapBody}
+            style={this.state.mapStyle}
             maxZoom={7}
             tms={true}
             maxNativeZoom={7}
