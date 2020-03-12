@@ -45,9 +45,7 @@ class KMMap extends React.Component {
     return [
       {value: "tiles", label: "(stock)"},
       {value: "jnsq/tiles", label: "JNSQ"}
-    ].map((option) =>
-      <option key={"pack_" + option.value} value={option.value} disabled={option.disabled ? true : false}>{option.label}</option>
-    )
+    ]
   }
 
   bodyOptions() {
@@ -100,9 +98,7 @@ class KMMap extends React.Component {
       {value: "amos", label: "Amos"},
       {value: "enon", label: "Enon"},
       {value: "prax", label: "Prax"}
-    ].map((option) =>
-      <option key={"body_" + option.value} value={option.value} disabled={option.disabled ? true : false}>{option.label}</option>
-    )
+    ]
   }
 
   styleOptions() {
@@ -110,9 +106,7 @@ class KMMap extends React.Component {
       {value: "biome", label: "Biome"},
       {value: "sat", label: "Satellite"},
       {value: "slope", label: "Slope"}
-    ].map((option) =>
-      <option key={"style_" + option.value} value={option.value} disabled={option.disabled ? true : false}>{option.label}</option>
-    )
+    ]
   }
 
   onOpen(id) {
