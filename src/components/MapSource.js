@@ -5,13 +5,13 @@ class MapSource extends React.Component {
     super(props)
 
     this.state = {
-      packOptions: this.props.packOptions,
+      packOptions: this.convertOptions(this.props.packOptions, "pack"),
       pack: this.props.pack,
       onPackChange: this.props.onPackChange,
-      bodyOptions: this.props.bodyOptions,
+      bodyOptions: this.convertOptions(this.props.bodyOptions, "body"),
       mapBody: this.props.mapBody,
       onBodyChange: this.props.onBodyChange,
-      styleOptions: this.props.styleOptions,
+      styleOptions: this.convertOptions(this.props.styleOptions, "style"),
       mapStyle: this.props.mapStyle,
       onStyleChange: this.props.onStyleChange
     }
@@ -19,23 +19,29 @@ class MapSource extends React.Component {
 
   setPackOptions(newOptions) {
     this.setState({
-      packOptions: newOptions,
+      packOptions: this.convertOptions(newOptions, "pack"),
       pack: undefined
     })
   }
 
   setBodyOptions(newOptions) {
     this.setState({
-      bodyOptions: newOptions,
+      bodyOptions: this.convertOptions(newOptions, "body"),
       mapBody: undefined
     })
   }
 
   setStyleOptions(newOptions) {
     this.setState({
-      styleOptions: newOptions,
+      styleOptions: this.convertOptions(newOptions, "style"),
       mapStyle: undefined
     })
+  }
+
+  convertOptions(options, prefix) {
+    return options.map((option) =>
+      <option key={`${prefix}_` + option.value} value={option.value} disabled={option.disabled ? true : false}>{option.label}</option>
+    )
   }
 
   handleInputChange(event) {
