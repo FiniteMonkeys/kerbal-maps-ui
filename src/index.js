@@ -257,7 +257,7 @@ class KMMap extends React.Component {
           onOpen={this.onOpen.bind(this)}
           onClose={this.onClose.bind(this)}
         >
-          <Tab id="sidebar-home" header="Kerbal Maps 0.5.0" icon="fa fa-bars">
+          <Tab id="sidebar-home" header="Kerbal Maps 0.5.1" icon="fa fa-bars">
             <Credits />
           </Tab>
           <Tab id="sidebar-profile" header={this.state.currentUser || "Profile"} icon="fas fa-user">
