@@ -1,11 +1,14 @@
 import React from "react"
 import ReactDOM from "react-dom"
-import "./index.css"
+
 import { CRS } from "leaflet"
 import { Map as LeafletMap, TileLayer } from "react-leaflet"
 import { Sidebar, Tab } from "react-leaflet-sidebarv2"
 
+import Credits from "./components/Credits"
 import MapSource from "./components/MapSource"
+
+import "./index.css"
 
 class KMMap extends React.Component {
   constructor(props) {
@@ -13,48 +16,93 @@ class KMMap extends React.Component {
 
     this.state = {
       // map state
-      lat: -0.1027,
-      lon: -74.5754,
+      mapPack: "tiles",
+      attribution: "Map data: crowdsourced | Imagery: © 2011-2020 Take-Two Interactive, Inc.",
+      mapBody: "kerbin",
+      mapStyle: "sat",
       zoom: 5,
-      pack: 1,
-      body: "kerbin",
-      style: "sat",
+      lat:   0.0000,
+      lon: -90.0000,
 
       // sidebar state
       collapsed: true,
       selected: "sidebar-home",
 
       // user state
-      currentUser: undefined,
+      currentUser: undefined
     }
+  }
+
+  componentDidMount() {
+    this.setMapPack("tiles")
+    this.setMapBody("kerbin")
+    this.setMapStyle("sat")
   }
 
   packOptions() {
     return [
-      {value: 1, label: "(stock)"},
-      {value: 2, label: "JNSQ"}
+      {value: "tiles", label: "(stock)"},
+      {value: "jnsq/tiles", label: "JNSQ"}
     ]
   }
 
   bodyOptions() {
-    return [
-      {value: "moho", label: "Moho"},
-      {value: "eve", label: "Eve"},
-      {value: "gilly", label: "Gilly"},
-      {value: "kerbin", label: "Kerbin"},
-      {value: "mun", label: "Mun"},
-      {value: "minmus", label: "Minmus"},
-      {value: "duna", label: "Duna"},
-      {value: "ike", label: "Ike"},
-      {value: "dres", label: "Dres"},
-      {value: "jool", label: "Jool", disabled: true},
-      {value: "laythe", label: "Laythe"},
-      {value: "vall", label: "Vall"},
-      {value: "tylo", label: "Tylo"},
-      {value: "bop", label: "Bop"},
-      {value: "pol", label: "Pol"},
-      {value: "eeloo", label: "Eeloo"}
-    ]
+    switch (this.state.mapPack) {
+      case "jnsq/tiles":
+        return [
+          {value: "moho", label: "Moho"},
+          {value: "eve", label: "Eve"},
+          {value: "gilly", label: "Gilly"},
+          {value: "kerbin", label: "Kerbin"},
+          {value: "mun", label: "Mun"},
+          {value: "minmus", label: "Minmus"},
+          {value: "duna", label: "Duna"},
+          {value: "ike", label: "Ike"},
+          {value: "edna", label: "Edna"},
+          {value: "dak", label: "Dak"},
+          {value: "dres", label: "Dres"},
+          {value: "jool", label: "Jool", disabled: true},
+          {value: "laythe", label: "Laythe"},
+          {value: "vall", label: "Vall"},
+          {value: "tylo", label: "Tylo"},
+          {value: "bop", label: "Bop"},
+          {value: "pol", label: "Pol"},
+          {value: "lindor", label: "Lindor", disabled: true},
+          {value: "krel", label: "Krel"},
+          {value: "aden", label: "Aden"},
+          {value: "huygen", label: "Huygen", disabled: true},
+          {value: "riga", label: "Riga"},
+          {value: "talos", label: "Talos"},
+          {value: "eeloo", label: "Eeloo"},
+          {value: "celes", label: "Celes"},
+          {value: "tam", label: "Tam"},
+          {value: "hamek", label: "Hamek"},
+          {value: "nara", label: "Nara"},
+          {value: "amos", label: "Amos"},
+          {value: "enon", label: "Enon"},
+          {value: "prax", label: "Prax"}
+        ]
+
+      default:
+        return [
+          {value: "moho", label: "Moho"},
+          {value: "eve", label: "Eve"},
+          {value: "gilly", label: "Gilly"},
+          {value: "kerbin", label: "Kerbin"},
+          {value: "mun", label: "Mun"},
+          {value: "minmus", label: "Minmus"},
+          {value: "duna", label: "Duna"},
+          {value: "ike", label: "Ike"},
+          {value: "dres", label: "Dres"},
+          {value: "jool", label: "Jool", disabled: true},
+          {value: "laythe", label: "Laythe"},
+          {value: "vall", label: "Vall"},
+          {value: "tylo", label: "Tylo"},
+          {value: "bop", label: "Bop"},
+          {value: "pol", label: "Pol"},
+          {value: "eeloo", label: "Eeloo"}
+        ]
+    }
   }
 
   styleOptions() {
@@ -63,6 +111,111 @@ class KMMap extends React.Component {
       {value: "sat", label: "Satellite"},
       {value: "slope", label: "Slope"}
     ]
+  }
+
+  setMapPack(value) {
+    let attribution = undefined
+    let initialBody = undefined
+
+    switch (value) {
+      case "jnsq/tiles":
+        attribution = "Map data: crowdsourced | Imagery: JNSQ, licenced by CC BY-NC-ND 3.0"
+        initialBody = "kerbin"
+        break
+
+      default:
+        attribution = "Map data: crowdsourced | Imagery: © 2011-2020 Take-Two Interactive, Inc."
+        initialBody = "kerbin"
+        break
+    }
+
+    this.setState({
+      mapPack: value,
+      attribution: attribution
+    })
+
+    this.setMapBody(initialBody, value)
+
+    // alert(`pack changing to ${value}`)
+
+    // let bodyOptions = loadBodiesForPack(value)
+    // hideAllOverlays()
+    // window.overlays = {} // clear out overlays for previous body
+    // updateTileLayer(window)
+  }
+
+  setMapBody(value, packValue) {
+    let initialLat = undefined
+    let initialLon = undefined
+    let initialStyle = undefined
+
+    switch (packValue || this.state.mapPack) {
+      case "jnsq/tiles":
+        switch (value) {
+          case "kerbin":
+            initialLat =   0.0000
+            initialLon = -91.8000
+            initialStyle = "sat"
+            break
+
+          default:
+            initialLat =   0.0000
+            initialLon = -90.0000
+            initialStyle = "sat"
+            break
+        }
+        break
+
+      default:
+        switch (value) {
+          case "kerbin":
+            initialLat =  -0.1027
+            initialLon = -74.5754
+            initialStyle = "sat"
+            break
+
+          default:
+            initialLat =   0.0000
+            initialLon = -90.0000
+            initialStyle = "sat"
+            break
+        }
+        break
+    }
+
+    this.setState({
+      mapBody: value,
+      lat: initialLat,
+      lon: initialLon
+    })
+
+    this.setMapStyle(initialStyle)
+
+    // alert(`body changing to ${value}`)
+
+    // hideAllOverlays()
+    // window.overlays = {} // clear out overlays for previous body
+    // updateTileLayer(window)
+    // if (window.mapStyle == "biome") {
+    //   loadBiomesForBody(channel, window.legendControl, window.mapBody)
+    // }
+  }
+
+  setMapStyle(value) {
+    this.setState({
+      mapStyle: value
+    })
+
+    // alert(`style changing to ${value}`)
+
+    // updateTileLayer(window)
+    // if (window.mapStyle == "biome") {
+    //   window.legendControl.addTo(window.map)
+    //   loadBiomesForBody(channel, window.legendControl, window.mapBody)
+    // }
+    // else {
+    //   window.legendControl.remove()
+    // }
   }
 
   onOpen(id) {
@@ -79,42 +232,15 @@ class KMMap extends React.Component {
   }
 
   onPackChange(value) {
-    this.setState({
-      pack: value
-    })
-
-    // let bodyOptions = loadBodiesForPack(value)
-    // hideAllOverlays()
-    // window.overlays = {} // clear out overlays for previous body
-    // updateTileLayer(window)
+    this.setMapPack(value)
   }
 
   onBodyChange(value) {
-    this.setState({
-      body: value
-    })
-
-    // hideAllOverlays()
-    // window.overlays = {} // clear out overlays for previous body
-    // updateTileLayer(window)
-    // if (window.selectedStyle == "biome") {
-    //   loadBiomesForBody(channel, window.legendControl, window.selectedBody)
-    // }
+    this.setMapBody(value)
   }
 
   onStyleChange(value) {
-    this.setState({
-      style: value
-    })
-
-    // updateTileLayer(window)
-    // if (window.selectedStyle == "biome") {
-    //   window.legendControl.addTo(window.map)
-    //   loadBiomesForBody(channel, window.legendControl, window.selectedBody)
-    // }
-    // else {
-    //   window.legendControl.remove()
-    // }
+    this.setMapStyle(value)
   }
 
   render() {
@@ -131,40 +257,8 @@ class KMMap extends React.Component {
           onOpen={this.onOpen.bind(this)}
           onClose={this.onClose.bind(this)}
         >
-          <Tab id="sidebar-home" header="Kerbal Maps 0.5.0" icon="fa fa-bars">
-            <div className="container-fluid">
-              <div className="row">
-                <div className="col credits">
-                  <h2>Kerbal Maps</h2>
-                  <p>is made possible by</p>
-                  <ul>
-                    <li><a href="https://www.kerbalspaceprogram.com/">Kerbal Space Program</a> for the stock map data, as well as being the reason for doing this in the first place</li>
-                    <li><a href="https://github.com/Sigma88/Sigma-Cartographer">Sigma-Cartographer</a> for a means of extracting the map data</li>
-                    <li><a href="https://github.com/jrossignol/WaypointManager">Waypoint Manager</a> and KSP forum user <a href="https://forum.kerbalspaceprogram.com/index.php?/profile/133118-miles-teg/">Miles Teg</a> for the list of waypoints for anomalies currently baked in</li>
-                    <li>
-                      <a href="https://leafletjs.com">Leaflet.js</a> for a means to display the map images, with the help of
-                      <ul>
-                        <li><a href="https://github.com/Leaflet/Leaflet.Graticule">Leaflet.Graticule</a></li>
-                        <li><a href="https://github.com/nickpeihl/leaflet-sidebar-v2">leaflet-sidebar-v2</a></li>
-                        <li><a href="https://github.com/Leaflet/Leaflet.Icon.Glyph">Leaflet.Icon.Glyph</a></li>
-                        <li><a href="https://github.com/consbio/Leaflet.HtmlLegend">Leaflet.HtmlLegend</a></li>
-                      </ul>
-                    </li>
-                    <li><a href="https://getbootstrap.com">Bootstrap</a> for styling and layout</li>
-                    <li><a href="https://fontawesome.com">Font Awesome</a> for graphics</li>
-                    <li><a href="https://realfavicongenerator.net/">RealFaviconGenerator</a> for icons</li>
-                    <li><a href="http://ksp.deringenieur.net">ksp.deringenieur.net</a> (and <a href="http://www.kerbalmaps.com">kerbalmaps.com</a> before it) for the original idea</li>
-                    <li><a href="https://hexdocs.pm/distillery/">Distillery</a> for making it possible to package the app so it can be made public</li>
-                    <li><a href="https://heroku.com/">Heroku</a> for hosting the app</li>
-                    <li><a href="https://aws.amazon.com/">Amazon AWS</a> for hosting the map images</li>
-                    <li><a href="https://github.com/WizardOfOgz">Andy Ogzewalla</a> for JS mentorship, wizardry, and general awesomeness</li>
-                    <li><a href="https://forum.kerbalspaceprogram.com/index.php?/profile/202640-rowbear/">RowBear</a> for contributing CPU cycles and person-hours to extracting map tiles for the JNSQ planet pack</li>
-                  </ul>
-                  <p>kerbal maps is a <a href="http://finitemonkeys.org/">finitemonkeys</a> joint</p>
-                  <p>Copyright © 2018-2020 Craig S. Cottingham and subject to <a href="http://www.apache.org/licenses/LICENSE-2.0">the Apache License, Version 2.0</a>, except where stated otherwise.</p>
-                </div>
-              </div>
-            </div>
+          <Tab id="sidebar-home" header="Kerbal Maps 0.5.1" icon="fa fa-bars">
+            <Credits />
           </Tab>
           <Tab id="sidebar-profile" header={this.state.currentUser || "Profile"} icon="fas fa-user">
             {/*
@@ -246,19 +340,19 @@ class KMMap extends React.Component {
             end if
           */}
           </Tab>
-          <Tab id="sidebar-body-style" header="Map Source" icon="fas fa-globe">
+          <Tab id="sidebar-source" header="Map Source" icon="fas fa-globe">
             <div className="container-fluid">
               <div className="row">
                 <div className="col">
                   <MapSource
                     packOptions={this.packOptions()}
-                    selectedPack={this.state.pack}
+                    pack={this.state.mapPack}
                     onPackChange={this.onPackChange.bind(this)}
                     bodyOptions={this.bodyOptions()}
-                    selectedBody={this.state.body}
+                    mapBody={this.state.mapBody}
                     onBodyChange={this.onBodyChange.bind(this)}
                     styleOptions={this.styleOptions()}
-                    selectedStyle={this.state.style}
+                    mapStyle={this.state.mapStyle}
                     onStyleChange={this.onStyleChange.bind(this)}
                   />
                 </div>
@@ -390,10 +484,12 @@ class KMMap extends React.Component {
         >
           <TileLayer
             ref={obj => { this.tileLayer = obj }}
-            url="https://d3kmnwgldcmvsd.cloudfront.net/tiles/{body}/{style}/{z}/{x}/{y}.png"
-            attribution="Map data: crowdsourced | Imagery: © 2011-2020 Take-Two Interactive, Inc."
-            body={this.state.body}
-            style={this.state.style}
+            key={`${this.state.mapPack},${this.state.mapBody},${this.state.mapStyle}`}
+            url="https://d3kmnwgldcmvsd.cloudfront.net/{pack}/{body}/{style}/{z}/{x}/{y}.png"
+            attribution={this.state.attribution}
+            pack={this.state.mapPack}
+            body={this.state.mapBody}
+            style={this.state.mapStyle}
             maxZoom={7}
             tms={true}
             maxNativeZoom={7}
