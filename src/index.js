@@ -16,22 +16,13 @@ class KMMap extends React.Component {
 
     this.state = {
       // map state
-
-      // lat: -0.1027,           // stock
-      // lon: -74.5754,
-      lat: 0.0000,            // JNSQ
-      lon: -91.8000,
-
-      zoom: 5,
-
-      // mapPack: "tiles",       // stock
-      // mapBody: "kerbin",
-      // mapStyle: "sat",
-      // attribution: "Map data: crowdsourced | Imagery: © 2011-2020 Take-Two Interactive, Inc."
-      mapPack: "jnsq/tiles",  // JNSQ
+      mapPack: "tiles",
+      attribution: "Map data: crowdsourced | Imagery: © 2011-2020 Take-Two Interactive, Inc.",
       mapBody: "kerbin",
       mapStyle: "sat",
-      attribution: "Map data: crowdsourced | Imagery: JNSQ, licenced by CC BY-NC-ND 3.0",
+      zoom: 5,
+      lat:   0.0000,
+      lon: -90.0000,
 
       // sidebar state
       collapsed: true,
@@ -42,6 +33,12 @@ class KMMap extends React.Component {
     }
   }
 
+  componentDidMount() {
+    this.setMapPack("tiles")
+    this.setMapBody("kerbin")
+    this.setMapStyle("sat")
+  }
+
   packOptions() {
     return [
       {value: "tiles", label: "(stock)"},
@@ -50,56 +47,62 @@ class KMMap extends React.Component {
   }
 
   bodyOptions() {
-    return [
-      // {value: "moho", label: "Moho"},
-      // {value: "eve", label: "Eve"},
-      // {value: "gilly", label: "Gilly"},
-      // {value: "kerbin", label: "Kerbin"},
-      // {value: "mun", label: "Mun"},
-      // {value: "minmus", label: "Minmus"},
-      // {value: "duna", label: "Duna"},
-      // {value: "ike", label: "Ike"},
-      // {value: "dres", label: "Dres"},
-      // {value: "jool", label: "Jool", disabled: true},
-      // {value: "laythe", label: "Laythe"},
-      // {value: "vall", label: "Vall"},
-      // {value: "tylo", label: "Tylo"},
-      // {value: "bop", label: "Bop"},
-      // {value: "pol", label: "Pol"},
-      // {value: "eeloo", label: "Eeloo"}
+    switch (this.state.mapPack) {
+      case "jnsq/tiles":
+        return [
+          {value: "moho", label: "Moho"},
+          {value: "eve", label: "Eve"},
+          {value: "gilly", label: "Gilly"},
+          {value: "kerbin", label: "Kerbin"},
+          {value: "mun", label: "Mun"},
+          {value: "minmus", label: "Minmus"},
+          {value: "duna", label: "Duna"},
+          {value: "ike", label: "Ike"},
+          {value: "edna", label: "Edna"},
+          {value: "dak", label: "Dak"},
+          {value: "dres", label: "Dres"},
+          {value: "jool", label: "Jool", disabled: true},
+          {value: "laythe", label: "Laythe"},
+          {value: "vall", label: "Vall"},
+          {value: "tylo", label: "Tylo"},
+          {value: "bop", label: "Bop"},
+          {value: "pol", label: "Pol"},
+          {value: "lindor", label: "Lindor", disabled: true},
+          {value: "krel", label: "Krel"},
+          {value: "aden", label: "Aden"},
+          {value: "huygen", label: "Huygen", disabled: true},
+          {value: "riga", label: "Riga"},
+          {value: "talos", label: "Talos"},
+          {value: "eeloo", label: "Eeloo"},
+          {value: "celes", label: "Celes"},
+          {value: "tam", label: "Tam"},
+          {value: "hamek", label: "Hamek"},
+          {value: "nara", label: "Nara"},
+          {value: "amos", label: "Amos"},
+          {value: "enon", label: "Enon"},
+          {value: "prax", label: "Prax"}
+        ]
 
-      {value: "moho", label: "Moho"},
-      {value: "eve", label: "Eve"},
-      {value: "gilly", label: "Gilly"},
-      {value: "kerbin", label: "Kerbin"},
-      {value: "mun", label: "Mun"},
-      {value: "minmus", label: "Minmus"},
-      {value: "duna", label: "Duna"},
-      {value: "ike", label: "Ike"},
-      {value: "edna", label: "Edna"},
-      {value: "dak", label: "Dak"},
-      {value: "dres", label: "Dres"},
-      {value: "jool", label: "Jool", disabled: true},
-      {value: "laythe", label: "Laythe"},
-      {value: "vall", label: "Vall"},
-      {value: "tylo", label: "Tylo"},
-      {value: "bop", label: "Bop"},
-      {value: "pol", label: "Pol"},
-      {value: "lindor", label: "Lindor", disabled: true},
-      {value: "krel", label: "Krel"},
-      {value: "aden", label: "Aden"},
-      {value: "huygen", label: "Huygen", disabled: true},
-      {value: "riga", label: "Riga"},
-      {value: "talos", label: "Talos"},
-      {value: "eeloo", label: "Eeloo"},
-      {value: "celes", label: "Celes"},
-      {value: "tam", label: "Tam"},
-      {value: "hamek", label: "Hamek"},
-      {value: "nara", label: "Nara"},
-      {value: "amos", label: "Amos"},
-      {value: "enon", label: "Enon"},
-      {value: "prax", label: "Prax"}
-    ]
+      default:
+        return [
+          {value: "moho", label: "Moho"},
+          {value: "eve", label: "Eve"},
+          {value: "gilly", label: "Gilly"},
+          {value: "kerbin", label: "Kerbin"},
+          {value: "mun", label: "Mun"},
+          {value: "minmus", label: "Minmus"},
+          {value: "duna", label: "Duna"},
+          {value: "ike", label: "Ike"},
+          {value: "dres", label: "Dres"},
+          {value: "jool", label: "Jool", disabled: true},
+          {value: "laythe", label: "Laythe"},
+          {value: "vall", label: "Vall"},
+          {value: "tylo", label: "Tylo"},
+          {value: "bop", label: "Bop"},
+          {value: "pol", label: "Pol"},
+          {value: "eeloo", label: "Eeloo"}
+        ]
+    }
   }
 
   styleOptions() {
@@ -108,6 +111,111 @@ class KMMap extends React.Component {
       {value: "sat", label: "Satellite"},
       {value: "slope", label: "Slope"}
     ]
+  }
+
+  setMapPack(value) {
+    let attribution = undefined
+    let initialBody = undefined
+
+    switch (value) {
+      case "jnsq/tiles":
+        attribution = "Map data: crowdsourced | Imagery: JNSQ, licenced by CC BY-NC-ND 3.0"
+        initialBody = "kerbin"
+        break
+
+      default:
+        attribution = "Map data: crowdsourced | Imagery: © 2011-2020 Take-Two Interactive, Inc."
+        initialBody = "kerbin"
+        break
+    }
+
+    this.setState({
+      mapPack: value,
+      attribution: attribution
+    })
+
+    this.setMapBody(initialBody, value)
+
+    // alert(`pack changing to ${value}`)
+
+    // let bodyOptions = loadBodiesForPack(value)
+    // hideAllOverlays()
+    // window.overlays = {} // clear out overlays for previous body
+    // updateTileLayer(window)
+  }
+
+  setMapBody(value, packValue) {
+    let initialLat = undefined
+    let initialLon = undefined
+    let initialStyle = undefined
+
+    switch (packValue || this.state.mapPack) {
+      case "jnsq/tiles":
+        switch (value) {
+          case "kerbin":
+            initialLat =   0.0000
+            initialLon = -91.8000
+            initialStyle = "sat"
+            break
+
+          default:
+            initialLat =   0.0000
+            initialLon = -90.0000
+            initialStyle = "sat"
+            break
+        }
+        break
+
+      default:
+        switch (value) {
+          case "kerbin":
+            initialLat =  -0.1027
+            initialLon = -74.5754
+            initialStyle = "sat"
+            break
+
+          default:
+            initialLat =   0.0000
+            initialLon = -90.0000
+            initialStyle = "sat"
+            break
+        }
+        break
+    }
+
+    this.setState({
+      mapBody: value,
+      lat: initialLat,
+      lon: initialLon
+    })
+
+    this.setMapStyle(initialStyle)
+
+    // alert(`body changing to ${value}`)
+
+    // hideAllOverlays()
+    // window.overlays = {} // clear out overlays for previous body
+    // updateTileLayer(window)
+    // if (window.mapStyle == "biome") {
+    //   loadBiomesForBody(channel, window.legendControl, window.mapBody)
+    // }
+  }
+
+  setMapStyle(value) {
+    this.setState({
+      mapStyle: value
+    })
+
+    // alert(`style changing to ${value}`)
+
+    // updateTileLayer(window)
+    // if (window.mapStyle == "biome") {
+    //   window.legendControl.addTo(window.map)
+    //   loadBiomesForBody(channel, window.legendControl, window.mapBody)
+    // }
+    // else {
+    //   window.legendControl.remove()
+    // }
   }
 
   onOpen(id) {
@@ -124,48 +232,15 @@ class KMMap extends React.Component {
   }
 
   onPackChange(value) {
-    this.setState({
-      pack: value
-    })
-
-    // alert(`pack changing to ${value}`)
-
-    // let bodyOptions = loadBodiesForPack(value)
-    // hideAllOverlays()
-    // window.overlays = {} // clear out overlays for previous body
-    // updateTileLayer(window)
+    this.setMapPack(value)
   }
 
   onBodyChange(value) {
-    this.setState({
-      mapBody: value
-    })
-
-    // alert(`body changing to ${value}`)
-
-    // hideAllOverlays()
-    // window.overlays = {} // clear out overlays for previous body
-    // updateTileLayer(window)
-    // if (window.mapStyle == "biome") {
-    //   loadBiomesForBody(channel, window.legendControl, window.mapBody)
-    // }
+    this.setMapBody(value)
   }
 
   onStyleChange(value) {
-    this.setState({
-      mapStyle: value
-    })
-
-    // alert(`style changing to ${value}`)
-
-    // updateTileLayer(window)
-    // if (window.mapStyle == "biome") {
-    //   window.legendControl.addTo(window.map)
-    //   loadBiomesForBody(channel, window.legendControl, window.mapBody)
-    // }
-    // else {
-    //   window.legendControl.remove()
-    // }
+    this.setMapStyle(value)
   }
 
   render() {
