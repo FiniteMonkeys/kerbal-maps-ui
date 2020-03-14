@@ -1,74 +1,109 @@
 import React from "react"
-import MapBody from "./MapBody.js"
-import MapPack from "./MapPack.js"
-import MapStyle from "./MapStyle.js"
 
 class MapSource extends React.Component {
   constructor(props) {
     super(props)
 
     this.state = {
-      packOptions: this.props.packOptions,
-      selectedPack: this.props.selectedPack,
-      bodyOptions: this.props.bodyOptions,
-      selectedBody: this.props.selectedBody,
-      styleOptions: this.props.styleOptions,
-      selectedStyle: this.props.selectedStyle
+      packOptions: this.convertOptions(this.props.packOptions, "pack"),
+      pack: this.props.pack,
+      onPackChange: this.props.onPackChange,
+      bodyOptions: this.convertOptions(this.props.bodyOptions, "body"),
+      mapBody: this.props.mapBody,
+      onBodyChange: this.props.onBodyChange,
+      styleOptions: this.convertOptions(this.props.styleOptions, "style"),
+      mapStyle: this.props.mapStyle,
+      onStyleChange: this.props.onStyleChange
     }
-
-    this.changeSelectedPack = this.changeSelectedPack.bind(this)
-    this.changeSelectedBody = this.changeSelectedBody.bind(this)
-    this.changeSelectedStyle = this.changeSelectedStyle.bind(this)
   }
 
   setPackOptions(newOptions) {
-    this.setState(previousState => ({packOptions: newOptions}))
-    if (this.props.onPackOptionsChange !== undefined) {
-      this.props.onPackOptionsChange(newOptions)
-    }
-  }
-
-  changeSelectedPack(value) {
-    this.setState(previousState => ({selectedPack: value}))
-    if (this.props.onPackChange !== undefined) {
-      this.props.onPackChange(value)
-    }
+    this.setState({
+      packOptions: this.convertOptions(newOptions, "pack"),
+      pack: undefined
+    })
   }
 
   setBodyOptions(newOptions) {
-    this.setState(previousState => ({bodyOptions: newOptions}))
-    if (this.props.onBodyOptionsChange !== undefined) {
-      this.props.onBodyOptionsChange(newOptions)
-    }
-  }
-
-  changeSelectedBody(value) {
-    this.setState(previousState => ({selectedBody: value}))
-    if (this.props.onBodyChange !== undefined) {
-      this.props.onBodyChange(value)
-    }
+    this.setState({
+      bodyOptions: this.convertOptions(newOptions, "body"),
+      mapBody: undefined
+    })
   }
 
   setStyleOptions(newOptions) {
-    this.setState(previousState => ({styleOptions: newOptions}))
-    if (this.props.onStyleOptionsChange !== undefined) {
-      this.props.onStyleOptionsChange(newOptions)
-    }
+    this.setState({
+      styleOptions: this.convertOptions(newOptions, "style"),
+      mapStyle: undefined
+    })
   }
 
-  changeSelectedStyle(value) {
-    this.setState(previousState => ({selectedStyle: value}))
-    if (this.props.onStyleChange !== undefined) {
-      this.props.onStyleChange(value)
+  convertOptions(options, prefix) {
+    return options.map((option) =>
+      <option key={`${prefix}_` + option.value} value={option.value} disabled={option.disabled ? true : false}>{option.label}</option>
+    )
+  }
+
+  handleInputChange(event) {
+    const target = event.target
+    const name = target.name
+    const value = target.value
+
+    this.setState({
+      [name]: value
+    })
+
+    switch (name) {
+      case 'pack':
+        if (this.state.onPackChange) {
+          this.state.onPackChange(value)
+        }
+        break;
+
+      case 'mapBody':
+        if (this.state.onBodyChange) {
+          this.state.onBodyChange(value)
+        }
+        break;
+
+      case 'mapStyle':
+        if (this.state.onStyleChange) {
+          this.state.onStyleChange(value)
+        }
+        break;
+
+      default:
+        break;
     }
   }
 
   render() {
     return (
-      <form action="#">
-        <MapPack options={this.state.packOptions} selectedValue={this.state.selectedPack} onValueChange={this.changeSelectedPack}/>
-        <MapBody options={this.state.bodyOptions} selectedValue={this.state.selectedBody} onValueChange={this.changeSelectedBody}/>
-        <MapStyle options={this.state.styleOptions} selectedValue={this.state.selectedStyle} onValueChange={this.changeSelectedStyle}/>
+      <form>
+        <div className="form-group">
+          <label>
+            Planet Pack
+            <select name="pack" value={this.state.pack} className="form-control" onChange={this.handleInputChange.bind(this)}>
+              {this.state.packOptions}
+            </select>
+          </label>
+        </div>
+        <div className="form-group">
+          <label>
+            Body
+            <select name="mapBody" value={this.state.mapBody} className="form-control" onChange={this.handleInputChange.bind(this)}>
+              {this.state.bodyOptions}
+            </select>
+          </label>
+        </div>
+        <div className="form-group">
+          <label>
+            Style
+            <select name="mapStyle" value={this.state.mapStyle} className="form-control" onChange={this.handleInputChange.bind(this)}>
+              {this.state.styleOptions}
+            </select>
+          </label>
+        </div>
       </form>
     )
   }
