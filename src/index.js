@@ -345,6 +345,7 @@ class KMMap extends React.Component {
               <div className="row">
                 <div className="col">
                   <MapSource
+                    key={`${this.state.mapPack}`}
                     packOptions={this.packOptions()}
                     pack={this.state.mapPack}
                     onPackChange={this.onPackChange.bind(this)}
@@ -474,7 +475,6 @@ class KMMap extends React.Component {
           </Tab>
         </Sidebar>
         <LeafletMap
-          ref={obj => { this.leafletMap = obj }}
           className="sidebar-map"
           center={position}
           zoom={this.state.zoom}
@@ -483,7 +483,6 @@ class KMMap extends React.Component {
           crs={CRS.EPSG4326}
         >
           <TileLayer
-            ref={obj => { this.tileLayer = obj }}
             key={`${this.state.mapPack},${this.state.mapBody},${this.state.mapStyle}`}
             url="https://d3kmnwgldcmvsd.cloudfront.net/{pack}/{body}/{style}/{z}/{x}/{y}.png"
             attribution={this.state.attribution}
