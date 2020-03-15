@@ -24,6 +24,12 @@ class MapSource extends React.Component {
     })
   }
 
+  setPack(newPack) {
+    this.setState({
+      pack: newPack
+    })
+  }
+
   setBodyOptions(newOptions) {
     this.setState({
       bodyOptions: this.convertOptions(newOptions, "body"),
@@ -31,10 +37,22 @@ class MapSource extends React.Component {
     })
   }
 
+  setMapBody(newBody) {
+    this.setState({
+      mapBody: newBody
+    })
+  }
+
   setStyleOptions(newOptions) {
     this.setState({
       styleOptions: this.convertOptions(newOptions, "style"),
       mapStyle: undefined
+    })
+  }
+
+  setMapStyle(newStyle) {
+    this.setState({
+      mapStyle: newStyle
     })
   }
 
