@@ -59,25 +59,6 @@ describe("setPackOptions", () => {
   })
 })
 
-describe("setPack", () => {
-  it("sets the selected pack", () => {
-    const optionsPlaceholder = [
-      {value: "a", label: "A"},
-      {value: "b", label: "B"},
-      {value: "c", label: "C"}
-    ]
-
-    const component = renderer.create(
-      <MapSource packOptions={optionsPlaceholder} bodyOptions={optionsPlaceholder} styleOptions={optionsPlaceholder} />
-    )
-    const instance = component.getInstance()
-    expect(instance.state.pack).toBeUndefined()
-
-    instance.setPack("a")
-    expect(instance.state.pack).toEqual("a")
-  })
-})
-
 describe("setBodyOptions", () => {
   it("also clears the selected body", () => {
     const optionsBefore = [
@@ -107,25 +88,6 @@ describe("setBodyOptions", () => {
   })
 })
 
-describe("setMapBody", () => {
-  it("sets the selected body", () => {
-    const optionsPlaceholder = [
-      {value: "a", label: "A"},
-      {value: "b", label: "B"},
-      {value: "c", label: "C"}
-    ]
-
-    const component = renderer.create(
-      <MapSource packOptions={optionsPlaceholder} bodyOptions={optionsPlaceholder} styleOptions={optionsPlaceholder} />
-    )
-    const instance = component.getInstance()
-    expect(instance.state.mapBody).toBeUndefined()
-
-    instance.setMapBody("b")
-    expect(instance.state.mapBody).toEqual("b")
-  })
-})
-
 describe("setStyleOptions", () => {
   it("also clears the selected style", () => {
     const optionsBefore = [
@@ -152,24 +114,5 @@ describe("setStyleOptions", () => {
 
     instance.setStyleOptions(optionsAfter)
     expect(instance.state.mapStyle).toBeUndefined()
-  })
-})
-
-describe("setMapStyle", () => {
-  it("sets the selected style", () => {
-    const optionsPlaceholder = [
-      {value: "a", label: "A"},
-      {value: "b", label: "B"},
-      {value: "c", label: "C"}
-    ]
-
-    const component = renderer.create(
-      <MapSource packOptions={optionsPlaceholder} bodyOptions={optionsPlaceholder} styleOptions={optionsPlaceholder} />
-    )
-    const instance = component.getInstance()
-    expect(instance.state.mapStyle).toBeUndefined()
-
-    instance.setMapStyle("c")
-    expect(instance.state.mapStyle).toEqual("c")
   })
 })
