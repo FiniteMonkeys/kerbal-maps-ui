@@ -2,13 +2,17 @@ import React from "react"
 import ReactDOM from "react-dom"
 
 import { CRS } from "leaflet"
-import { Map as LeafletMap, TileLayer } from "react-leaflet"
+import { Map as LeafletMap, TileLayer, withLeaflet } from "react-leaflet"
 import { Sidebar, Tab } from "react-leaflet-sidebarv2"
+
+import { ReactLeafletZoomIndicator } from "react-leaflet-zoom-indicator"
 
 import Credits from "./components/Credits"
 import MapSource from "./components/MapSource"
 
 import "./index.css"
+
+const ZoomIndicator = withLeaflet(ReactLeafletZoomIndicator)
 
 class KMMap extends React.Component {
   constructor(props) {
@@ -490,11 +494,13 @@ class KMMap extends React.Component {
             body={this.state.mapBody}
             style={this.state.mapStyle}
             maxZoom={7}
+            minZoom={0}
             tms={true}
             maxNativeZoom={7}
             minNativeZoom={0}
             noWrap={true}
           />
+          <ZoomIndicator head="zoom:" position="topleft" />
         </LeafletMap>
       </div>
     )

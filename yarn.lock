@@ -8506,6 +8506,11 @@ react-leaflet-sidebarv2@^0.6.0:
   dependencies:
     leaflet "^1.3.1"
 
+react-leaflet-zoom-indicator@^0.1.2:
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/react-leaflet-zoom-indicator/-/react-leaflet-zoom-indicator-0.1.2.tgz#1ab4d9d57b29b28d6f9a0d9aaa38431c6c244d15"
+  integrity sha512-l5dCT+GpmKG2U3enYVxi3ThxqJo+ObITfLtm6Kk8NdXx1RODHKGuHBvd3uFtd5JaunyRLzCaj8aVxRtWw+7eEA==
+
 react-leaflet@^2.6.1:
   version "2.6.1"
   resolved "https://registry.yarnpkg.com/react-leaflet/-/react-leaflet-2.6.1.tgz#e5d6514d2358c51a28e614b8a0ddf8dca56e7179"
