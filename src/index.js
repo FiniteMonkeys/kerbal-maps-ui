@@ -75,7 +75,7 @@ class KMMap extends React.Component {
           {value: "lindor", label: "Lindor", disabled: true},
           {value: "krel", label: "Krel"},
           {value: "aden", label: "Aden"},
-          {value: "huygen", label: "Huygen", disabled: true},
+          {value: "huygen", label: "Huygen"},
           {value: "riga", label: "Riga"},
           {value: "talos", label: "Talos"},
           {value: "eeloo", label: "Eeloo"},
