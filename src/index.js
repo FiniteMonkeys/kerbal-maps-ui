@@ -2,13 +2,18 @@ import React from "react"
 import ReactDOM from "react-dom"
 
 import { CRS } from "leaflet"
-import { Map as LeafletMap, TileLayer } from "react-leaflet"
+import { Map as LeafletMap, TileLayer, withLeaflet } from "react-leaflet"
 import { Sidebar, Tab } from "react-leaflet-sidebarv2"
+
+import { BoxZoomControl } from "react-leaflet-box-zoom"
+import { ReactLeafletZoomIndicator } from "react-leaflet-zoom-indicator"
 
 import Credits from "./components/Credits"
 import MapSource from "./components/MapSource"
 
 import "./index.css"
+
+const ZoomIndicator = withLeaflet(ReactLeafletZoomIndicator)
 
 class KMMap extends React.Component {
   constructor(props) {
@@ -70,7 +75,7 @@ class KMMap extends React.Component {
           {value: "lindor", label: "Lindor", disabled: true},
           {value: "krel", label: "Krel"},
           {value: "aden", label: "Aden"},
-          {value: "huygen", label: "Huygen", disabled: true},
+          {value: "huygen", label: "Huygen"},
           {value: "riga", label: "Riga"},
           {value: "talos", label: "Talos"},
           {value: "eeloo", label: "Eeloo"},
@@ -257,7 +262,7 @@ class KMMap extends React.Component {
           onOpen={this.onOpen.bind(this)}
           onClose={this.onClose.bind(this)}
         >
-          <Tab id="sidebar-home" header="Kerbal Maps 0.5.1" icon="fa fa-bars">
+          <Tab id="sidebar-home" header="Kerbal Maps 0.5.2" icon="fa fa-bars">
             <Credits />
           </Tab>
           <Tab id="sidebar-profile" header={this.state.currentUser || "Profile"} icon="fas fa-user">
@@ -345,6 +350,7 @@ class KMMap extends React.Component {
               <div className="row">
                 <div className="col">
                   <MapSource
+                    key={`${this.state.mapPack}`}
                     packOptions={this.packOptions()}
                     pack={this.state.mapPack}
                     onPackChange={this.onPackChange.bind(this)}
@@ -474,7 +480,6 @@ class KMMap extends React.Component {
           </Tab>
         </Sidebar>
         <LeafletMap
-          ref={obj => { this.leafletMap = obj }}
           className="sidebar-map"
           center={position}
           zoom={this.state.zoom}
@@ -483,7 +488,6 @@ class KMMap extends React.Component {
           crs={CRS.EPSG4326}
         >
           <TileLayer
-            ref={obj => { this.tileLayer = obj }}
             key={`${this.state.mapPack},${this.state.mapBody},${this.state.mapStyle}`}
             url="https://d3kmnwgldcmvsd.cloudfront.net/{pack}/{body}/{style}/{z}/{x}/{y}.png"
             attribution={this.state.attribution}
@@ -491,11 +495,14 @@ class KMMap extends React.Component {
             body={this.state.mapBody}
             style={this.state.mapStyle}
             maxZoom={7}
+            minZoom={0}
             tms={true}
             maxNativeZoom={7}
             minNativeZoom={0}
             noWrap={true}
           />
+          <BoxZoomControl position="topleft" sticky={false} />
+          <ZoomIndicator head="zoom:" position="topleft" />
         </LeafletMap>
       </div>
     )
