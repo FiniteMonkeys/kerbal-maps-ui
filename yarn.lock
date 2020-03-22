@@ -8499,6 +8499,13 @@ react-is@^16.12.0, react-is@^16.7.0, react-is@^16.8.1, react-is@^16.8.4, react-i
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.13.0.tgz#0f37c3613c34fe6b37cd7f763a0d6293ab15c527"
   integrity sha512-GFMtL0vHkiBv9HluwNZTggSn/sCyEt9n02aM0dSAjGGyqyNlAyftYm4phPxdvCigG15JreC5biwxCgTAJZ7yAA==
 
+react-leaflet-box-zoom@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/react-leaflet-box-zoom/-/react-leaflet-box-zoom-1.0.2.tgz#65da08867c65f1306e8fd3c03c8f16ee934fe4d1"
+  integrity sha512-SGXH2kk8uqs0XzlmcKZld4qcVMJdPxzOCvepACMSMPSwSGEGcBUsGXvnmv/weVdyJctO2CdmndYn/CLz4flHBA==
+  dependencies:
+    react-style-object-to-css "^1.1.2"
+
 react-leaflet-sidebarv2@^0.6.0:
   version "0.6.0"
   resolved "https://registry.yarnpkg.com/react-leaflet-sidebarv2/-/react-leaflet-sidebarv2-0.6.0.tgz#bf8b5e1a792108d0a0dfcdbc1e1c991be44925eb"
@@ -8580,6 +8587,11 @@ react-scripts@^3.4.0:
     workbox-webpack-plugin "4.3.1"
   optionalDependencies:
     fsevents "2.1.2"
+
+react-style-object-to-css@^1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/react-style-object-to-css/-/react-style-object-to-css-1.1.2.tgz#3e97da92c9edf8190e30f4b27026e74285940498"
+  integrity sha512-+5MFULqCCj7wwJJ/ISKFP91ZlHVF1Rv8o0neiTKvt21XDTU5e34tc8hy+XPLeYWYOupdHt25HxxwocvYm3HM6A==
 
 react-test-renderer@^16.13.0:
   version "16.13.0"
