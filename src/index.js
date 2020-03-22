@@ -5,6 +5,7 @@ import { CRS } from "leaflet"
 import { Map as LeafletMap, TileLayer, withLeaflet } from "react-leaflet"
 import { Sidebar, Tab } from "react-leaflet-sidebarv2"
 
+import { BoxZoomControl } from "react-leaflet-box-zoom"
 import { ReactLeafletZoomIndicator } from "react-leaflet-zoom-indicator"
 
 import Credits from "./components/Credits"
@@ -500,6 +501,7 @@ class KMMap extends React.Component {
             minNativeZoom={0}
             noWrap={true}
           />
+          <BoxZoomControl position="topleft" sticky={false} />
           <ZoomIndicator head="zoom:" position="topleft" />
         </LeafletMap>
       </div>
