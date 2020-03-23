@@ -13,7 +13,107 @@ import MapSource from "./components/MapSource"
 
 import "./index.css"
 
+/********************************************************************
+ ** begin react-leaflet-graticule
+ ********************************************************************/
+
+import { GridLayer } from "leaflet"
+import { GridLayer as ReactLeafletGridLayer } from "react-leaflet"
+
+/********************************************************************
+ ** end react-leaflet-graticule
+ ********************************************************************/
+
 const ZoomIndicator = withLeaflet(ReactLeafletZoomIndicator)
+
+/********************************************************************
+ ** begin react-leaflet-graticule
+ ********************************************************************/
+
+class ReactLeafletGridCanvas extends ReactLeafletGridLayer {
+  constructor(props, context) {
+    super(props)
+
+    this.updateVariables = this.updateVariables.bind(this)
+    this.drawTile = this.drawTile.bind(this)
+
+    this.defaultOptions = {
+      showLabel: true,
+      opacity: 1,
+      weight: 0.8,
+      color: "#aaa",
+      font: "12px Verdana",
+      lngLineCurved: 0,
+      latLineCurved: 0,
+      zoomInterval: [
+        {start: 2, end: 2, interval: 40},
+        {start: 3, end: 3, interval: 20},
+        {start: 4, end: 4, interval: 10},
+        {start: 5, end: 5, interval: 5},
+        {start: 8, end: 20, interval: 1}
+      ]
+    }
+
+    this.updateVariables(props)
+    this.map = context.map || props.leaflet.map
+  }
+
+  updateVariables(props) {
+    this.options = (props && props.options) || this.defaultOptions
+  }
+
+  createLeafletElement() {
+    const _ = this;
+    const Grid = GridLayer.extend({
+      createTile: function (coords) {
+        const tile = document.createElement("canvas")
+        tile.className = "leaflet-tile"
+        _.size = this.getTileSize()
+        tile.width = _.size.x
+        tile.height = _.size.y
+        _.drawTile(tile, coords)
+        return tile
+      }
+    })
+    return new Grid(this.options)
+  }
+
+  updateLeafletElement(fromProps, toProps) {
+    this.updateVariables(toProps)
+    this.leafletElement._resetGrid()
+    this.leafletElement._update()
+    Object.keys(this.leafletElement._tiles).forEach(key => {
+      const canvas = this.leafletElement._tiles[key]
+      const ctx = canvas.getContext("2d")
+      ctx.imageSmoothingEnabled = false
+      ctx.webkitImageSmoothingEnabled = false
+      ctx.mozImageSmoothingEnabled = false
+      this.drawTile(canvas, canvas.coords)
+    })
+  }
+
+  drawTile(canvas, coords) {
+    this.coords = coords
+    const ctx = canvas.getContext("2d")
+    // canvas.width = canvas.width
+    ctx.translate(0.5, 0.5)
+    ctx.setLineDash([3])
+    ctx.lineWidth = 0.4
+    ctx.strokeStyle = this.options.color
+    ctx.fillStyle = this.options.color
+    ctx.rect(0, 0, canvas.width, canvas.height)
+    ctx.stroke()
+
+    ctx.textAlign = "start"
+    ctx.fillText("text", 5, 20)
+  }
+}
+
+const GridCanvas = withLeaflet(ReactLeafletGridCanvas)
+
+/********************************************************************
+ ** end react-leaflet-graticule
+ ********************************************************************/
 
 class KMMap extends React.Component {
   constructor(props) {
@@ -366,13 +466,13 @@ class KMMap extends React.Component {
             </div>
           </Tab>
           <Tab id="sidebar-search" header="Search" icon="fas fa-search-location">
-            <div class="container-fluid">
-              <div class="row">
-                <div class="col">
+            <div className="container-fluid">
+              <div className="row">
+                <div className="col">
                   <form action="#" method="POST">
-                    <div class="form-group">
+                    <div className="form-group">
                       <input className="form-control" id="sidebar-search-query" name="query" placeholder="Coordinate or waypoint" type="text" aria-describedby="sidebar-search-query-help" />
-                      <small id="sidebar-search-query-help" class="form-text text-muted">
+                      <small id="sidebar-search-query-help" className="form-text text-muted">
                         Examples:
                         <ul>
                           <li>-0.1027,-74.5754</li>
@@ -382,8 +482,8 @@ class KMMap extends React.Component {
                       </small>
                     </div>
 
-                    <div class="form-group float-right">
-                      <button type="submit" class="btn btn-primary">Search</button>
+                    <div className="form-group float-right">
+                      <button type="submit" className="btn btn-primary">Search</button>
                     </div>
                   </form>
                 </div>
@@ -391,9 +491,9 @@ class KMMap extends React.Component {
             </div>
           </Tab>
           <Tab id="sidebar-overlays" header="Overlays" icon="fas fa-layer-group">
-            <div class="container-fluid">
-              <div class="row">
-                <div class="col">
+            <div className="container-fluid">
+              <div className="row">
+                <div className="col">
                   <form id="overlay-list" action="#">
                   </form>
                 </div>
@@ -401,72 +501,72 @@ class KMMap extends React.Component {
             </div>
           </Tab>
           <Tab id="sidebar-upload" header="Upload" icon="fas fa-upload">
-            <div class="container-fluid">
-              <div class="row">
-                <div class="col">
-                  <form id="overlay-list" action="#">
+            <div className="container-fluid">
+              <div className="row">
+                <div className="col">
+                  <form id="upload-list" action="#">
                   </form>
                 </div>
               </div>
             </div>
           </Tab>
           <Tab id="sidebar-help" header="Help" icon="fas fa-question" anchor="bottom">
-            <div class="container-fluid">
-              <div class="row">
-                <div class="col">
-                  <div class="accordion" id="accordionHelp">
+            <div className="container-fluid">
+              <div className="row">
+                <div className="col">
+                  <div className="accordion" id="accordionHelp">
 
-                    <div class="card">
-                      <div class="card-header" id="headingHelpOverview">
-                        <h2 class="mb-0">
-                          <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseHelpOverview" aria-expanded="true" aria-controls="collapseHelpOverview">
+                    <div className="card">
+                      <div className="card-header" id="headingHelpOverview">
+                        <h2 className="mb-0">
+                          <button className="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseHelpOverview" aria-expanded="true" aria-controls="collapseHelpOverview">
                             Overview
                           </button>
                         </h2>
                       </div>
-                      <div id="collapseHelpOverview" class="collapse show" aria-labelledby="headingHelpOverview" data-parent="#accordionHelp">
-                        <div class="card-body">
+                      <div id="collapseHelpOverview" className="collapse show" aria-labelledby="headingHelpOverview" data-parent="#accordionHelp">
+                        <div className="card-body">
                           <p>Kerbal Maps is like <a href="https://maps.google.com/">Google Maps</a> for <a href="https://www.kerbalspaceprogram.com">Kerbal Space Program</a>. As you'd expect, it behaves a lot like Google Maps (or any other map webapp).</p>
                           <ul>
                             <li>Click and drag to pan the map.</li>
-                            <li>Use the <i class="far fa-plus-square"></i> and <i class="far fa-minus-square"></i> buttons in the top-left corner of the map to zoom in and out.</li>
+                            <li>Use the <i className="far fa-plus-square"></i> and <i className="far fa-minus-square"></i> buttons in the top-left corner of the map to zoom in and out.</li>
                             <li>Single click on the map to get the latitude and longitude at that point.</li>
                           </ul>
-                          <p>Something that Kerbal Maps has that other map webapps don't is <em>overlays</em>. Open the Overlays sidebar pane (by clicking on the <i class="fas fa-layer-group"></i> icon) and select one or more checkboxes. Markers will be added to the map as a group belonging to that overlay. For example, the "Anomalies" overlay shows the locations of all anomalies (<a href="https://wiki.kerbalspaceprogram.com/wiki/List_of_easter_eggs">Easter eggs</a>) on Kerbin.</p>
+                          <p>Something that Kerbal Maps has that other map webapps don't is <em>overlays</em>. Open the Overlays sidebar pane (by clicking on the <i className="fas fa-layer-group"></i> icon) and select one or more checkboxes. Markers will be added to the map as a group belonging to that overlay. For example, the "Anomalies" overlay shows the locations of all anomalies (<a href="https://wiki.kerbalspaceprogram.com/wiki/List_of_easter_eggs">Easter eggs</a>) on Kerbin.</p>
                         </div>
                       </div>
                     </div>
 
-                    <div class="card">
-                      <div class="card-header" id="headingHelpSidebar">
-                        <h2 class="mb-0">
-                          <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseHelpSidebar" aria-expanded="false" aria-controls="collapseHelpSidebar">
+                    <div className="card">
+                      <div className="card-header" id="headingHelpSidebar">
+                        <h2 className="mb-0">
+                          <button className="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseHelpSidebar" aria-expanded="false" aria-controls="collapseHelpSidebar">
                             Sidebar
                           </button>
                         </h2>
                       </div>
-                      <div id="collapseHelpSidebar" class="collapse" aria-labelledby="headingHelpSidebar" data-parent="#accordionHelp">
-                        <div class="card-body">
-                          <h3><i class="fa fa-bars"></i>&nbsp;:&nbsp;Credits</h3>
+                      <div id="collapseHelpSidebar" className="collapse" aria-labelledby="headingHelpSidebar" data-parent="#accordionHelp">
+                        <div className="card-body">
+                          <h3><i className="fa fa-bars"></i>&nbsp;:&nbsp;Credits</h3>
                           <p>An incomplete list of everyone and everything who helped make this possible.</p>
                           <br/>
-                          <h3><i class="fas fa-user"></i>/<i class="fas fa-user-check"></i>&nbsp;:&nbsp;Profile</h3>
+                          <h3><i className="fas fa-user"></i>/<i className="fas fa-user-check"></i>&nbsp;:&nbsp;Profile</h3>
                           <p>If you have a username and password, you can log in here.</p>
                           <p>New account creation is disabled at this time.</p>
                           <br/>
-                          <h3><i class="fas fa-globe"></i>&nbsp;:&nbsp;Body and Style</h3>
+                          <h3><i className="fas fa-globe"></i>&nbsp;:&nbsp;Body and Style</h3>
                           <p>Selecting celestial body and map style is disabled at this time.</p>
                           <br/>
-                          <h3><i class="fas fa-search-location"></i>&nbsp;:&nbsp;Search</h3>
+                          <h3><i className="fas fa-search-location"></i>&nbsp;:&nbsp;Search</h3>
                           <p>Search is disabled at this time.</p>
                           <br/>
-                          <h3><i class="fas fa-layer-group"></i>&nbsp;:&nbsp;Overlays</h3>
+                          <h3><i className="fas fa-layer-group"></i>&nbsp;:&nbsp;Overlays</h3>
                           <p>Turn overlays on and off.</p>
                           <br/>
-                          <h3><i class="fas fa-upload"></i>&nbsp;:&nbsp;Upload</h3>
+                          <h3><i className="fas fa-upload"></i>&nbsp;:&nbsp;Upload</h3>
                           <p>Upload is disabled at this time.</p>
                           <br/>
-                          <h3><i class="fas fa-question"></i>&nbsp;:&nbsp;Help</h3>
+                          <h3><i className="fas fa-question"></i>&nbsp;:&nbsp;Help</h3>
                           <p>You’re reading it right now.</p>
                         </div>
                       </div>
@@ -503,6 +603,7 @@ class KMMap extends React.Component {
           />
           <BoxZoomControl position="topleft" sticky={false} />
           <ZoomIndicator head="zoom:" position="topleft" />
+          <GridCanvas />
         </LeafletMap>
       </div>
     )
