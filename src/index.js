@@ -30,7 +30,7 @@ const ZoomIndicator = withLeaflet(ReactLeafletZoomIndicator)
  ** begin react-leaflet-graticule
  ********************************************************************/
 
-class ReactLeafletGridCanvas extends ReactLeafletGridLayer {
+class ReactLeafletGraticule extends ReactLeafletGridLayer {
   constructor(props, context) {
     super(props)
 
@@ -43,6 +43,7 @@ class ReactLeafletGridCanvas extends ReactLeafletGridLayer {
       weight: 0.8,
       color: "#aaa",
       font: "12px Verdana",
+      dashArray: [0, 0],
       lngLineCurved: 0,
       latLineCurved: 0,
       zoomInterval: [
@@ -109,7 +110,7 @@ class ReactLeafletGridCanvas extends ReactLeafletGridLayer {
   }
 }
 
-const GridCanvas = withLeaflet(ReactLeafletGridCanvas)
+const Graticule = withLeaflet(ReactLeafletGraticule)
 
 /********************************************************************
  ** end react-leaflet-graticule
@@ -603,7 +604,7 @@ class KMMap extends React.Component {
           />
           <BoxZoomControl position="topleft" sticky={false} />
           <ZoomIndicator head="zoom:" position="topleft" />
-          <GridCanvas />
+          <Graticule />
         </LeafletMap>
       </div>
     )
