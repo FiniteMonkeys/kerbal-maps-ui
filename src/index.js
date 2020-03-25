@@ -17,8 +17,8 @@ import "./index.css"
  ** begin react-leaflet-graticule
  ********************************************************************/
 
-import { GridLayer } from "leaflet"
-import { GridLayer as ReactLeafletGridLayer } from "react-leaflet"
+import { Layer } from "leaflet"
+import { MapLayer } from "react-leaflet"
 
 /********************************************************************
  ** end react-leaflet-graticule
@@ -30,12 +30,14 @@ const ZoomIndicator = withLeaflet(ReactLeafletZoomIndicator)
  ** begin react-leaflet-graticule
  ********************************************************************/
 
-class ReactLeafletGraticule extends ReactLeafletGridLayer {
+class ReactLeafletGraticule extends MapLayer {
   constructor(props, context) {
+    console.log("in ReactLeafletGraticule constructor")
+
     super(props)
 
     this.updateVariables = this.updateVariables.bind(this)
-    this.drawGraticule = this.drawGraticule.bind(this)
+    // this.drawGraticule = this.drawGraticule.bind(this)
 
     this.defaultOptions = {
       showLabel: true,
@@ -56,7 +58,8 @@ class ReactLeafletGraticule extends ReactLeafletGridLayer {
     }
 
     this.updateVariables(props)
-    this.map = context.map || props.leaflet.map
+    this.map = null // context.map || props.leaflet.map
+    this.canvas = null
   }
 
   updateVariables(props) {
@@ -64,52 +67,174 @@ class ReactLeafletGraticule extends ReactLeafletGridLayer {
   }
 
   createLeafletElement() {
+    console.log("in ReactLeafletGraticule.createLeafletElement")
+
     const _ = this;
-    const GraticuleRenderer = GridLayer.extend({
+    const GraticuleRenderer = Layer.extend({
 
-      createTile: function (coords) {
-        const tile = document.createElement("canvas")
-        tile.className = "leaflet-tile"
-        _.size = this.getTileSize()
-        tile.width = _.size.x
-        tile.height = _.size.y
-        _.drawGraticule(tile, coords)
-        return tile
+      // createTile: function (coords) {
+      //   const tile = document.createElement("canvas")
+      //   tile.className = "leaflet-tile"
+      //   _.size = this.getTileSize()
+      //   tile.width = _.size.x
+      //   tile.height = _.size.y
+      //   _.drawGraticule(tile, coords)
+      //   return tile
+      // },
+
+      onAdd: function (map) {
+        console.log("in GraticuleRenderer.onAdd")
+
+        _.map = map
+
+        if (!_.canvas) {
+          _.initCanvas()
+        }
+
+        _.map._panes.overlayPane.appendChild(_.canvas)
+
+        _.map.on("viewreset", _.reset, _)
+        _.map.on("move", _.reset, _)
+        _.map.on("moveend", _.reset, _)
+
+        // if (_.map.options.zoomAnimation && L.Browser.any3d) {
+        //   _.map.on("zoomanim", _.animateZoom, _)
+        // }
+
+        _.reset()
+      },
+
+      onRemove: function (map) {
+        console.log("in GraticuleRenderer.onRemove")
+
+        if (_.map === map) {
+          let canvasParent = _.canvas.parentNode
+          if (canvasParent) {
+            canvasParent.removeChild(_.canvas)
+          }
+
+          _.canvas = null
+
+          _.map.off("viewreset", _.reset, _)
+          _.map.off("move", _.reset, _)
+          _.map.off("moveend", _.reset, _)
+
+          // if (_.map.options.zoomAnimation) {
+          //   _.map.off("zoomanim", _.animateZoom, _)
+          // }
+
+          _.map = null
+        }
+      },
+
+      addTo: function (map) {
+        map.addLayer(this)
+        return this
       }
-
     })
     return new GraticuleRenderer(this.options)
   }
 
   updateLeafletElement(fromProps, toProps) {
-    this.updateVariables(toProps)
-    this.leafletElement._resetGrid()
-    this.leafletElement._update()
-    Object.keys(this.leafletElement._tiles).forEach(key => {
-      const canvas = this.leafletElement._tiles[key]
-      const ctx = canvas.getContext("2d")
-      ctx.imageSmoothingEnabled = false
-      ctx.webkitImageSmoothingEnabled = false
-      ctx.mozImageSmoothingEnabled = false
-      this.drawGraticule(canvas, canvas.coords)
-    })
+    console.log("in ReactLeafletGraticule.updateLeafletElement")
+
+    // this.updateVariables(toProps)
+    // this.leafletElement._resetGrid()
+    // this.leafletElement._update()
+    // Object.keys(this.leafletElement._tiles).forEach(key => {
+    //   const canvas = this.leafletElement._tiles[key]
+    //   const ctx = canvas.getContext("2d")
+    //   ctx.imageSmoothingEnabled = false
+    //   ctx.webkitImageSmoothingEnabled = false
+    //   ctx.mozImageSmoothingEnabled = false
+    //   this.drawGraticule(canvas, canvas.coords)
+    // })
   }
 
-  drawGraticule(canvas, coords) {
-    this.coords = coords
+  initCanvas() {
+    console.log("in ReactLeafletGraticule.initCanvas")
+
+    let canvas = document.createElement("canvas")
+
+    // if (this.map.options.zoomAnimation && L.Browser.any3d) {
+    //   L.DomUtil.addClass(this.canvas, "leaflet-zoom-animated")
+    // }
+    // else {
+    //   L.DomUtil.addClass(this.canvas, "leaflet-zoom-hide")
+    // }
+    canvas.classList.add("leaflet-zoom-hide")
+
+    // this.updateOpacity()
+
+    canvas.onSelectStart = function() { return false }
+    canvas.onMouseMove = function() { return false }
+    canvas.onLoad = this.onCanvasLoad.bind(this)
+
+    this.canvas = canvas
+  }
+
+  onCanvasLoad() {
+    console.log("in ReactLeafletGraticule.onCanvasLoad")
+
+    this.leafletElement.fire("load")
+  }
+
+  reset() {
+    console.log("in ReactLeafletGraticule.reset")
+
+    let canvas = this.canvas
+    let size = this.map.getSize()
+    let lt = this.map.containerPointToLayerPoint([0, 0])
+
+    canvas._leaflet_pos = lt
+    // if (Browser.any3d) {
+    //   setTransform(canvas, lt)
+    // }
+    // else {
+      canvas.style.left = lt.x + "px"
+      canvas.style.top = lt.y + "px"
+    // }
+
+    canvas.width = size.x
+    canvas.height = size.y
+    canvas.style.width = size.x + "px"
+    canvas.style.height = size.y + "px"
+
+    // this.calcInterval()
+
+    this.draw(true)
+  }
+
+  draw(label) {
+    console.log("in ReactLeafletGraticule.draw")
+
+    const canvas = this.canvas
     const ctx = canvas.getContext("2d")
-    // canvas.width = canvas.width
-    ctx.translate(0.5, 0.5)
     ctx.setLineDash([3])
     ctx.lineWidth = 0.4
-    ctx.strokeStyle = this.options.color
-    ctx.fillStyle = this.options.color
-    ctx.rect(0, 0, canvas.width, canvas.height)
+    ctx.strokeStyle = "white"
+    ctx.fillStyle = "white"
+    ctx.rect(100, 100, canvas.width - 200, canvas.height - 200)
     ctx.stroke()
-
-    ctx.textAlign = "start"
-    ctx.fillText("text", 5, 20)
   }
+
+  // drawGraticule(canvas, coords) {
+  //   console.log("in ReactLeafletGraticule.drawGraticule")
+  //
+  //   this.coords = coords
+  //   const ctx = canvas.getContext("2d")
+  //   // canvas.width = canvas.width
+  //   ctx.translate(0.5, 0.5)
+  //   ctx.setLineDash([3])
+  //   ctx.lineWidth = 0.4
+  //   ctx.strokeStyle = this.options.color
+  //   ctx.fillStyle = this.options.color
+  //   ctx.rect(0, 0, canvas.width, canvas.height)
+  //   ctx.stroke()
+  //
+  //   ctx.textAlign = "start"
+  //   ctx.fillText("text", 5, 20)
+  // }
 }
 
 const Graticule = withLeaflet(ReactLeafletGraticule)
