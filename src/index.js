@@ -35,7 +35,7 @@ class ReactLeafletGraticule extends ReactLeafletGridLayer {
     super(props)
 
     this.updateVariables = this.updateVariables.bind(this)
-    this.drawTile = this.drawTile.bind(this)
+    this.drawGraticule = this.drawGraticule.bind(this)
 
     this.defaultOptions = {
       showLabel: true,
@@ -65,18 +65,20 @@ class ReactLeafletGraticule extends ReactLeafletGridLayer {
 
   createLeafletElement() {
     const _ = this;
-    const Grid = GridLayer.extend({
+    const GraticuleRenderer = GridLayer.extend({
+
       createTile: function (coords) {
         const tile = document.createElement("canvas")
         tile.className = "leaflet-tile"
         _.size = this.getTileSize()
         tile.width = _.size.x
         tile.height = _.size.y
-        _.drawTile(tile, coords)
+        _.drawGraticule(tile, coords)
         return tile
       }
+
     })
-    return new Grid(this.options)
+    return new GraticuleRenderer(this.options)
   }
 
   updateLeafletElement(fromProps, toProps) {
@@ -89,11 +91,11 @@ class ReactLeafletGraticule extends ReactLeafletGridLayer {
       ctx.imageSmoothingEnabled = false
       ctx.webkitImageSmoothingEnabled = false
       ctx.mozImageSmoothingEnabled = false
-      this.drawTile(canvas, canvas.coords)
+      this.drawGraticule(canvas, canvas.coords)
     })
   }
 
-  drawTile(canvas, coords) {
+  drawGraticule(canvas, coords) {
     this.coords = coords
     const ctx = canvas.getContext("2d")
     // canvas.width = canvas.width
