@@ -32,7 +32,7 @@ const ZoomIndicator = withLeaflet(ReactLeafletZoomIndicator)
 
 class ReactLeafletGraticule extends MapLayer {
   constructor(props, context) {
-    console.log("in ReactLeafletGraticule constructor")
+    // console.log("in ReactLeafletGraticule constructor")
 
     super(props)
 
@@ -45,9 +45,10 @@ class ReactLeafletGraticule extends MapLayer {
       weight: 0.8,
       color: "#aaa",
       font: "12px Verdana",
+      fontColor: "#aaa",
       dashArray: [0, 0],
-      lngLineCurved: 0,
-      latLineCurved: 0,
+      // lngLineCurved: 0,
+      // latLineCurved: 0,
       zoomInterval: [
         {start: 2, end: 2, interval: 40},
         {start: 3, end: 3, interval: 20},
@@ -58,8 +59,12 @@ class ReactLeafletGraticule extends MapLayer {
     }
 
     this.updateVariables(props)
+
     this.map = null // context.map || props.leaflet.map
     this.canvas = null
+    this.currZoom = null
+    this.currLatInterval = null
+    this.currLngInterval = null
   }
 
   updateVariables(props) {
@@ -67,23 +72,13 @@ class ReactLeafletGraticule extends MapLayer {
   }
 
   createLeafletElement() {
-    console.log("in ReactLeafletGraticule.createLeafletElement")
+    // console.log("in ReactLeafletGraticule.createLeafletElement")
 
     const _ = this;
     const GraticuleRenderer = Layer.extend({
 
-      // createTile: function (coords) {
-      //   const tile = document.createElement("canvas")
-      //   tile.className = "leaflet-tile"
-      //   _.size = this.getTileSize()
-      //   tile.width = _.size.x
-      //   tile.height = _.size.y
-      //   _.drawGraticule(tile, coords)
-      //   return tile
-      // },
-
       onAdd: function (map) {
-        console.log("in GraticuleRenderer.onAdd")
+        // console.log("in GraticuleRenderer.onAdd")
 
         _.map = map
 
@@ -105,12 +100,11 @@ class ReactLeafletGraticule extends MapLayer {
       },
 
       onRemove: function (map) {
-        console.log("in GraticuleRenderer.onRemove")
+        // console.log("in GraticuleRenderer.onRemove")
 
         if (_.map === map) {
-          let canvasParent = _.canvas.parentNode
-          if (canvasParent) {
-            canvasParent.removeChild(_.canvas)
+          if (_.canvas.parentNode) {
+            _.canvas.parentNode.removeChild(_.canvas)
           }
 
           _.canvas = null
@@ -152,9 +146,9 @@ class ReactLeafletGraticule extends MapLayer {
   }
 
   initCanvas() {
-    console.log("in ReactLeafletGraticule.initCanvas")
+    // console.log("in ReactLeafletGraticule.initCanvas")
 
-    let canvas = document.createElement("canvas")
+    const canvas = document.createElement("canvas")
 
     // if (this.map.options.zoomAnimation && L.Browser.any3d) {
     //   L.DomUtil.addClass(this.canvas, "leaflet-zoom-animated")
@@ -180,61 +174,280 @@ class ReactLeafletGraticule extends MapLayer {
   }
 
   reset() {
-    console.log("in ReactLeafletGraticule.reset")
+    // console.log("in ReactLeafletGraticule.reset")
 
-    let canvas = this.canvas
-    let size = this.map.getSize()
-    let lt = this.map.containerPointToLayerPoint([0, 0])
+    const size = this.map.getSize()
+    const lt = this.map.containerPointToLayerPoint([0, 0])
 
-    canvas._leaflet_pos = lt
+    this.canvas._leaflet_pos = lt
     // if (Browser.any3d) {
     //   setTransform(canvas, lt)
     // }
     // else {
-      canvas.style.left = lt.x + "px"
-      canvas.style.top = lt.y + "px"
+      this.canvas.style.left = lt.x + "px"
+      this.canvas.style.top = lt.y + "px"
     // }
 
-    canvas.width = size.x
-    canvas.height = size.y
-    canvas.style.width = size.x + "px"
-    canvas.style.height = size.y + "px"
+    this.canvas.width = size.x
+    this.canvas.height = size.y
+    this.canvas.style.width = size.x + "px"
+    this.canvas.style.height = size.y + "px"
 
-    // this.calcInterval()
+    this.calcInterval()
 
     this.draw(true)
   }
 
-  draw(label) {
-    console.log("in ReactLeafletGraticule.draw")
+  calcInterval() {
+    const zoom = this.map.getZoom()
+    if (zoom !== this.currZoom) {
+      this.currLngInterval = null
+      this.currLatInterval = null
+      this.currZoom = zoom
+    }
 
-    const canvas = this.canvas
-    const ctx = canvas.getContext("2d")
-    ctx.setLineDash([3])
-    ctx.lineWidth = 0.4
-    ctx.strokeStyle = "white"
-    ctx.fillStyle = "white"
-    ctx.rect(100, 100, canvas.width - 200, canvas.height - 200)
-    ctx.stroke()
+    if (!this.currLngInterval) {
+      try {
+        for (let idx in this.options.zoomInterval) {
+          const dict = this.options.zoomInterval[idx]
+          if ((dict.start <= zoom) && (dict.end >= zoom)) {
+            this.currLngInterval = dict.interval
+            break
+          }
+        }
+      }
+      catch (e) {
+        this.currLngInterval = 0
+      }
+    }
+
+    if (!this.currLatInterval) {
+      try {
+        for (let idx in this.options.zoomInterval) {
+          const dict = this.options.zoomInterval[idx]
+          if ((dict.start <= zoom) && (dict.end >= zoom)) {
+            this.currLatInterval = dict.interval
+            break
+          }
+        }
+      }
+      catch (e) {
+        this.currLatInterval = 0
+      }
+    }
+
+    // console.log(`this.currLngInterval = ${this.currLngInterval}`)
+    // console.log(`this.currLatInterval = ${this.currLatInterval}`)
   }
 
-  // drawGraticule(canvas, coords) {
-  //   console.log("in ReactLeafletGraticule.drawGraticule")
-  //
-  //   this.coords = coords
-  //   const ctx = canvas.getContext("2d")
-  //   // canvas.width = canvas.width
-  //   ctx.translate(0.5, 0.5)
-  //   ctx.setLineDash([3])
-  //   ctx.lineWidth = 0.4
-  //   ctx.strokeStyle = this.options.color
-  //   ctx.fillStyle = this.options.color
-  //   ctx.rect(0, 0, canvas.width, canvas.height)
-  //   ctx.stroke()
-  //
-  //   ctx.textAlign = "start"
-  //   ctx.fillText("text", 5, 20)
-  // }
+  draw(label) {
+    // console.log("in ReactLeafletGraticule.draw")
+
+    if (!this.canvas || !this.map) {
+      return
+    }
+
+    const ctx = this.canvas.getContext("2d")
+    // ctx.setLineDash([3])
+    // ctx.lineWidth = 0.4
+    // ctx.strokeStyle = "white"
+    // ctx.fillStyle = "white"
+    // *** continued at end of function
+
+    ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
+    ctx.lineWidth = this.options.weight
+    ctx.strokeStyle = this.options.color
+    ctx.fillStyle = this.options.fontColor
+    ctx.setLineDash(this.options.dashArray)
+    if (this.options.font) {
+      ctx.font = this.options.font
+    }
+
+    const txtWidth = ctx.measureText("0").width
+    const txtHeight = 12
+    // try {
+    //   let fontSize = ctx.font.trim().split(" ")[0]
+    //   txtHeight = parsePxToInt(fontSize)
+    // }
+    // catch (e) {
+    // }
+
+    let lt = this.map.containerPointToLatLng({x: 0, y: 0})
+    let rt = this.map.containerPointToLatLng({x: this.canvas.width, y: 0})
+    let rb = this.map.containerPointToLatLng({x: this.canvas.width, y: this.canvas.height})
+
+    let pointPerLat = (lt.lat - rb.lat) / (this.canvas.height * 0.2)
+    let pointPerLon = (rt.lng - lt.lng) / (this.canvas.width * 0.2)
+    if (isNaN(pointPerLat) || isNaN(pointPerLon)) {
+      return
+    }
+
+    if (pointPerLat < 1) {
+      pointPerLat = 1
+    }
+    if (pointPerLon < 1) {
+      pointPerLon = 1
+    }
+
+    // console.log(`pointPerLat = ${pointPerLat}`)
+    // console.log(`pointPerLon = ${pointPerLon}`)
+
+    if (rb.lat < -90) {
+      rb.lat = -90
+    }
+    else {
+      rb.lat = parseInt(rb.lat - pointPerLat, 10)
+    }
+
+    if (lt.lat > 90) {
+      lt.lat = 90
+    }
+    else {
+      lt.lat = parseInt(lt.lat - pointPerLat, 10)
+    }
+
+    if ((lt.lng > 0) && (rt.lng < 0)) {
+      rt.lng += 360
+    }
+    rt.lng = parseInt(rt.lng + pointPerLon, 10)
+    lt.lng = parseInt(lt.lng - pointPerLon, 10)
+
+    // console.log(`lt = ${lt}`)
+    // console.log(`rt = ${rt}`)
+    // console.log(`rb = ${rb}`)
+
+    const lonDelta = 0.5
+
+    if (this.currLatInterval) {
+      for (let i = this.currLatInterval; i <= lt.lat; i += this.currLatInterval) {
+        if (i >= rb.lat) {
+          this.drawLatitudeLine(ctx, i, lt.lng, rt.lng, label)
+        }
+      }
+      for (let i = 0; i >= rb.lat; i -= this.currLatInterval) {
+        if (i <= lt.lat) {
+          this.drawLatitudeLine(ctx, i, lt.lng, rt.lng, label)
+        }
+      }
+    }
+
+    if (this.currLngInterval) {
+      for (let i = this.currLngInterval; i <= rt.lng; i += this.currLngInterval) {
+        if (i >= lt.lng) {
+          this.drawLongitudeLine(ctx, i, lt.lat, rb.lat, label)
+        }
+      }
+      for (let i = 0; i >= lt.lng; i -= this.currLngInterval) {
+        if (i <= rt.lng) {
+          this.drawLongitudeLine(ctx, i, lt.lat, rb.lat, label)
+        }
+      }
+    }
+
+    // *** continuing from top of function
+    // ctx.rect(100, 100, this.canvas.width - 200, this.canvas.height - 200)
+    // ctx.stroke()
+  }
+
+  drawLatitudeLine(ctx, tick, lngLeft, lngRight, label) {
+    let ll = this.latLngToCanvasPoint({lat: tick, lng: lngLeft})
+    const str = this.formatLatitude(tick)
+    const txtWidth = ctx.measureText(str).width
+    const txtHeight = 12
+
+    // if (curvedLat) {
+    //   ...
+    // }
+    // else {
+      let rr = this.latLngToCanvasPoint({lat: tick, lng: lngRight})
+      // if (curvedLon) {
+      //   ...
+      // }
+
+      ctx.beginPath()
+      ctx.moveTo(ll.x + 1, ll.y)
+      ctx.lineTo(rr.x - 1, rr.y)
+      ctx.stroke()
+
+      if (this.options.showLabel && label) {
+        const yy = ll.y + (txtHeight / 2) - 2
+        ctx.fillText(str, 0, yy)
+        ctx.fillText(str, this.canvas.width - txtWidth, yy)
+      }
+    // }
+  }
+
+  drawLongitudeLine(ctx, tick, latTop, latBottom, label) {
+    let bb = this.latLngToCanvasPoint({lat: latBottom, lng: tick})
+    const str = this.formatLongitude(tick)
+    const txtWidth = ctx.measureText(str).width
+    const txtHeight = 12
+
+    // if (curvedLat) {
+    //   ...
+    // }
+    // else {
+      let tt = this.latLngToCanvasPoint({lat: latTop, lng: tick})
+      // if (curvedLon) {
+      //   ...
+      // }
+
+      ctx.beginPath()
+      ctx.moveTo(tt.x, tt.y + 1)
+      ctx.lineTo(bb.x, bb.y - 1)
+      ctx.stroke()
+
+      if (this.options.showLabel && label) {
+        ctx.fillText(str, tt.x - (txtWidth / 2), txtHeight + 1)
+        ctx.fillText(str, bb.x - (txtWidth / 2), this.canvas.height - 3)
+      }
+    // }
+  }
+
+  formatLatitude(value) {
+    // if (this.options.latFormatTickLabel) {
+    //   return this.options.latFormatTickLabel(value)
+    // }
+
+    if (value < 0) {
+      return `${value * -1}S`
+    }
+    else if (value > 0) {
+      return `${value}N`
+    }
+
+    return `${value}`
+  }
+
+  formatLongitude(value) {
+    // if (this.options.lngFormatTickLabel) {
+    //   return this.options.lngFormatTickLabel(value)
+    // }
+
+    if (value < -180) {
+      return `${value + 360}W`
+    }
+    else if (value === -180) {
+      return "180"
+    }
+    else if ((value < 0) && (value > -180)) {
+      return `${value * -1}W`
+    }
+    else if ((value > 0) && (value < 180)) {
+      return `${value}E`
+    }
+    else if (value > 180) {
+      return `${360 - value}W`
+    }
+
+    return `${value}`
+  }
+
+  latLngToCanvasPoint(latLng) {
+    let projectedPoint = this.map.project(latLng)
+    projectedPoint._subtract(this.map.getPixelOrigin())
+    return projectedPoint._add(this.map._getMapPanePos())
+  }
 }
 
 const Graticule = withLeaflet(ReactLeafletGraticule)
