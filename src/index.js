@@ -32,12 +32,9 @@ const ZoomIndicator = withLeaflet(ReactLeafletZoomIndicator)
 
 class ReactLeafletGraticule extends MapLayer {
   constructor(props, context) {
-    // console.log("in ReactLeafletGraticule constructor")
-
     super(props)
 
     this.updateVariables = this.updateVariables.bind(this)
-    // this.drawGraticule = this.drawGraticule.bind(this)
 
     this.defaultOptions = {
       showLabel: true,
@@ -46,15 +43,15 @@ class ReactLeafletGraticule extends MapLayer {
       color: "#aaa",
       font: "12px Verdana",
       fontColor: "#aaa",
-      dashArray: [0, 0],
+      dashArray: [3, 3],
       // lngLineCurved: 0,
       // latLineCurved: 0,
       zoomInterval: [
-        {start: 2, end: 2, interval: 40},
+        {start: 0, end: 2, interval: 30},
         {start: 3, end: 3, interval: 20},
         {start: 4, end: 4, interval: 10},
-        {start: 5, end: 5, interval: 5},
-        {start: 8, end: 20, interval: 1}
+        {start: 5, end: 5, interval:  5},
+        {start: 6, end: 7, interval:  1}
       ]
     }
 
@@ -72,14 +69,10 @@ class ReactLeafletGraticule extends MapLayer {
   }
 
   createLeafletElement() {
-    // console.log("in ReactLeafletGraticule.createLeafletElement")
-
     const _ = this;
     const GraticuleRenderer = Layer.extend({
 
       onAdd: function (map) {
-        // console.log("in GraticuleRenderer.onAdd")
-
         _.map = map
 
         if (!_.canvas) {
@@ -100,8 +93,6 @@ class ReactLeafletGraticule extends MapLayer {
       },
 
       onRemove: function (map) {
-        // console.log("in GraticuleRenderer.onRemove")
-
         if (_.map === map) {
           if (_.canvas.parentNode) {
             _.canvas.parentNode.removeChild(_.canvas)
@@ -132,31 +123,19 @@ class ReactLeafletGraticule extends MapLayer {
   updateLeafletElement(fromProps, toProps) {
     console.log("in ReactLeafletGraticule.updateLeafletElement")
 
-    // this.updateVariables(toProps)
-    // this.leafletElement._resetGrid()
-    // this.leafletElement._update()
-    // Object.keys(this.leafletElement._tiles).forEach(key => {
-    //   const canvas = this.leafletElement._tiles[key]
-    //   const ctx = canvas.getContext("2d")
-    //   ctx.imageSmoothingEnabled = false
-    //   ctx.webkitImageSmoothingEnabled = false
-    //   ctx.mozImageSmoothingEnabled = false
-    //   this.drawGraticule(canvas, canvas.coords)
-    // })
+    this.updateVariables(toProps)
+    this.reset()
   }
 
   initCanvas() {
-    // console.log("in ReactLeafletGraticule.initCanvas")
-
     const canvas = document.createElement("canvas")
 
     // if (this.map.options.zoomAnimation && L.Browser.any3d) {
-    //   L.DomUtil.addClass(this.canvas, "leaflet-zoom-animated")
+    canvas.classList.add("leaflet-zoom-animated")
     // }
     // else {
-    //   L.DomUtil.addClass(this.canvas, "leaflet-zoom-hide")
+    //   canvas.classList.add("leaflet-zoom-hide")
     // }
-    canvas.classList.add("leaflet-zoom-hide")
 
     // this.updateOpacity()
 
@@ -168,30 +147,27 @@ class ReactLeafletGraticule extends MapLayer {
   }
 
   onCanvasLoad() {
-    console.log("in ReactLeafletGraticule.onCanvasLoad")
-
     this.leafletElement.fire("load")
   }
 
   reset() {
-    // console.log("in ReactLeafletGraticule.reset")
-
     const size = this.map.getSize()
     const lt = this.map.containerPointToLayerPoint([0, 0])
 
     this.canvas._leaflet_pos = lt
     // if (Browser.any3d) {
-    //   setTransform(canvas, lt)
+      // setTransform(canvas, lt)
+      this.canvas.style["transform"] = `translate3d(${lt.x}px,${lt.y}px,0)`
     // }
     // else {
-      this.canvas.style.left = lt.x + "px"
-      this.canvas.style.top = lt.y + "px"
+      // this.canvas.style.left = lt.x + "px"
+      // this.canvas.style.top = lt.y + "px"
     // }
 
     this.canvas.width = size.x
     this.canvas.height = size.y
-    this.canvas.style.width = size.x + "px"
-    this.canvas.style.height = size.y + "px"
+    // this.canvas.style.width = size.x + "px"
+    // this.canvas.style.height = size.y + "px"
 
     this.calcInterval()
 
@@ -235,24 +211,14 @@ class ReactLeafletGraticule extends MapLayer {
         this.currLatInterval = 0
       }
     }
-
-    // console.log(`this.currLngInterval = ${this.currLngInterval}`)
-    // console.log(`this.currLatInterval = ${this.currLatInterval}`)
   }
 
   draw(label) {
-    // console.log("in ReactLeafletGraticule.draw")
-
     if (!this.canvas || !this.map) {
       return
     }
 
     const ctx = this.canvas.getContext("2d")
-    // ctx.setLineDash([3])
-    // ctx.lineWidth = 0.4
-    // ctx.strokeStyle = "white"
-    // ctx.fillStyle = "white"
-    // *** continued at end of function
 
     ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
     ctx.lineWidth = this.options.weight
@@ -263,8 +229,8 @@ class ReactLeafletGraticule extends MapLayer {
       ctx.font = this.options.font
     }
 
-    const txtWidth = ctx.measureText("0").width
-    const txtHeight = 12
+    // const txtWidth = ctx.measureText("0").width
+    // const txtHeight = 12
     // try {
     //   let fontSize = ctx.font.trim().split(" ")[0]
     //   txtHeight = parsePxToInt(fontSize)
@@ -273,11 +239,10 @@ class ReactLeafletGraticule extends MapLayer {
     // }
 
     let lt = this.map.containerPointToLatLng({x: 0, y: 0})
-    let rt = this.map.containerPointToLatLng({x: this.canvas.width, y: 0})
     let rb = this.map.containerPointToLatLng({x: this.canvas.width, y: this.canvas.height})
 
     let pointPerLat = (lt.lat - rb.lat) / (this.canvas.height * 0.2)
-    let pointPerLon = (rt.lng - lt.lng) / (this.canvas.width * 0.2)
+    let pointPerLon = (rb.lng - lt.lng) / (this.canvas.width * 0.2)
     if (isNaN(pointPerLat) || isNaN(pointPerLon)) {
       return
     }
@@ -288,9 +253,6 @@ class ReactLeafletGraticule extends MapLayer {
     if (pointPerLon < 1) {
       pointPerLon = 1
     }
-
-    // console.log(`pointPerLat = ${pointPerLat}`)
-    // console.log(`pointPerLon = ${pointPerLon}`)
 
     if (rb.lat < -90) {
       rb.lat = -90
@@ -303,54 +265,46 @@ class ReactLeafletGraticule extends MapLayer {
       lt.lat = 90
     }
     else {
-      lt.lat = parseInt(lt.lat - pointPerLat, 10)
+      lt.lat = parseInt(lt.lat + pointPerLat, 10)
     }
 
-    if ((lt.lng > 0) && (rt.lng < 0)) {
-      rt.lng += 360
+    if ((lt.lng > 0) && (rb.lng < 0)) {
+      rb.lng += 360
     }
-    rt.lng = parseInt(rt.lng + pointPerLon, 10)
+    rb.lng = parseInt(rb.lng + pointPerLon, 10)
     lt.lng = parseInt(lt.lng - pointPerLon, 10)
-
-    // console.log(`lt = ${lt}`)
-    // console.log(`rt = ${rt}`)
-    // console.log(`rb = ${rb}`)
-
-    const lonDelta = 0.5
 
     if (this.currLatInterval) {
       for (let i = this.currLatInterval; i <= lt.lat; i += this.currLatInterval) {
         if (i >= rb.lat) {
-          this.drawLatitudeLine(ctx, i, lt.lng, rt.lng, label)
+          this.drawLatitudeLine(ctx, i, lt.lng, rb.lng, label)
         }
       }
+
       for (let i = 0; i >= rb.lat; i -= this.currLatInterval) {
         if (i <= lt.lat) {
-          this.drawLatitudeLine(ctx, i, lt.lng, rt.lng, label)
+          this.drawLatitudeLine(ctx, i, lt.lng, rb.lng, label)
         }
       }
     }
 
     if (this.currLngInterval) {
-      for (let i = this.currLngInterval; i <= rt.lng; i += this.currLngInterval) {
+      for (let i = this.currLngInterval; i <= rb.lng; i += this.currLngInterval) {
         if (i >= lt.lng) {
           this.drawLongitudeLine(ctx, i, lt.lat, rb.lat, label)
         }
       }
+
       for (let i = 0; i >= lt.lng; i -= this.currLngInterval) {
-        if (i <= rt.lng) {
+        if (i <= rb.lng) {
           this.drawLongitudeLine(ctx, i, lt.lat, rb.lat, label)
         }
       }
     }
-
-    // *** continuing from top of function
-    // ctx.rect(100, 100, this.canvas.width - 200, this.canvas.height - 200)
-    // ctx.stroke()
   }
 
   drawLatitudeLine(ctx, tick, lngLeft, lngRight, label) {
-    let ll = this.latLngToCanvasPoint({lat: tick, lng: lngLeft})
+    const leftEnd = this.latLngToCanvasPoint({lat: tick, lng: lngLeft})
     const str = this.formatLatitude(tick)
     const txtWidth = ctx.measureText(str).width
     const txtHeight = 12
@@ -359,26 +313,26 @@ class ReactLeafletGraticule extends MapLayer {
     //   ...
     // }
     // else {
-      let rr = this.latLngToCanvasPoint({lat: tick, lng: lngRight})
+      const rightEnd = this.latLngToCanvasPoint({lat: tick, lng: lngRight})
       // if (curvedLon) {
       //   ...
       // }
 
       ctx.beginPath()
-      ctx.moveTo(ll.x + 1, ll.y)
-      ctx.lineTo(rr.x - 1, rr.y)
+      ctx.moveTo(leftEnd.x + 1, leftEnd.y)
+      ctx.lineTo(rightEnd.x - 1, rightEnd.y)
       ctx.stroke()
 
       if (this.options.showLabel && label) {
-        const yy = ll.y + (txtHeight / 2) - 2
-        ctx.fillText(str, 0, yy)
-        ctx.fillText(str, this.canvas.width - txtWidth, yy)
+        const yBaseline = leftEnd.y + (txtHeight / 2) - 2
+        ctx.fillText(str, 0, yBaseline)
+        ctx.fillText(str, this.canvas.width - txtWidth, yBaseline)
       }
     // }
   }
 
   drawLongitudeLine(ctx, tick, latTop, latBottom, label) {
-    let bb = this.latLngToCanvasPoint({lat: latBottom, lng: tick})
+    const bottomEnd = this.latLngToCanvasPoint({lat: latBottom, lng: tick})
     const str = this.formatLongitude(tick)
     const txtWidth = ctx.measureText(str).width
     const txtHeight = 12
@@ -387,21 +341,30 @@ class ReactLeafletGraticule extends MapLayer {
     //   ...
     // }
     // else {
-      let tt = this.latLngToCanvasPoint({lat: latTop, lng: tick})
+      const topEnd = this.latLngToCanvasPoint({lat: latTop, lng: tick})
+      // console.log(`topEnd = ${JSON.stringify(topEnd)}`)
+
       // if (curvedLon) {
       //   ...
       // }
 
       ctx.beginPath()
-      ctx.moveTo(tt.x, tt.y + 1)
-      ctx.lineTo(bb.x, bb.y - 1)
+      ctx.moveTo(topEnd.x, topEnd.y + 1)
+      ctx.lineTo(bottomEnd.x, bottomEnd.y - 1)
       ctx.stroke()
 
       if (this.options.showLabel && label) {
-        ctx.fillText(str, tt.x - (txtWidth / 2), txtHeight + 1)
-        ctx.fillText(str, bb.x - (txtWidth / 2), this.canvas.height - 3)
+        ctx.fillText(str, topEnd.x - (txtWidth / 2), txtHeight + 1)
+        ctx.fillText(str, bottomEnd.x - (txtWidth / 2), this.canvas.height - 3)
       }
     // }
+  }
+
+  latLngToCanvasPoint(latLng) {
+    let projectedPoint = this.map.project(latLng)
+    projectedPoint._subtract(this.map.getPixelOrigin())
+    projectedPoint._add(this.map._getMapPanePos())
+    return projectedPoint
   }
 
   formatLatitude(value) {
@@ -441,12 +404,6 @@ class ReactLeafletGraticule extends MapLayer {
     }
 
     return `${value}`
-  }
-
-  latLngToCanvasPoint(latLng) {
-    let projectedPoint = this.map.project(latLng)
-    projectedPoint._subtract(this.map.getPixelOrigin())
-    return projectedPoint._add(this.map._getMapPanePos())
   }
 }
 
